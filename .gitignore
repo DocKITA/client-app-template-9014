@@ -128,3 +128,16 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+
+favicon.ico
+
+docker-compose.yml
+
+Dockerfile
+server-deployment.yml
+server-service.yml
+
+client-deployment.yml
+client-service.yml

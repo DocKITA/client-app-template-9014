@@ -1,0 +1,127 @@
+/* FormBuilder.css */
+
+/* Style for form container */
+body {
+    background-color: #f4f4f4;
+  }
+
+
+
+  .btn-custom {
+    background-color: #f9770f ;
+    color: white;
+  }
+
+  .custom-file-upload {
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #f9770f;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  
+  .custom-file-upload input[type="file"] {
+    display: none;
+  }
+
+  .d-none {
+    display: none;
+  }
+
+  .active-button {
+    background-color: #4CAF50; 
+    color: white;
+  }
+
+  .form-container {
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  /* Style for the left panel containing form elements and options */
+  .left-panel {
+    width: 200px;
+    padding: 8px;
+    background-color: #f0f0f0;
+  }
+  
+  /* Style for the form element labels */
+  .form-element-label {
+    margin: 0 0 5px;
+  }
+  
+  /* Style for the form element input/select elements */
+  .form-element-input {
+    width: 100%;
+    padding: 8px;
+    margin: 0 0 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  /* Style for buttons */
+  .button {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-right: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  /* Style for the canvas container */
+  .canvas-container {
+    overflow: auto;
+    flex: 1;
+    width: 100%;
+    height: 600px;
+    position: relative;
+  }
+  
+  /* Style for the canvas */
+  .canvas {
+    max-width: 100%;
+    max-height: 600px;
+  }
+  
+  /* Style for the upload form modal */
+  .upload-form-modal {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  /* Style for the image preview */
+  .image-preview {
+    margin-top: 20px;
+  }
+  
+  /* Add other styles as needed */
+  
+  /* Media query for smaller screens */
+  @media (max-width: 768px) {
+    .form-container {
+      flex-direction: column;
+    }
+    .left-panel {
+      width: 100%;
+    }
+    .canvas-container {
+      width: 100%;
+    }
+  }
+  .react-time-picker .react-time-picker__inputGroup .react-time-picker__inputGroup__hour,
+  .react-time-picker .react-time-picker__inputGroup .react-time-picker__inputGroup__minute {
+    width: 40px !important;
+  }
+  
+ /* Hide the Clear and Clock buttons in the time picker */
+.react-time-picker__clear-button,
+.react-time-picker__clock-button {
+  display: none;
+}

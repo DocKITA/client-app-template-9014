@@ -1,0 +1,13 @@
+/* animation.css */
+.breathing-text {
+    animation: colorBreathe 1s infinite alternate;
+}
+  
+@keyframes colorBreathe {
+    0% {
+        color: var(--color1);
+    }
+    100% {
+        color: var(--color2);
+    }
+}

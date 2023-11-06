@@ -1,0 +1,36 @@
+body {
+    background-color: #f4f4f4;
+  }
+
+
+
+  .btn-custom {
+    background-color: #f9770f ;
+    color: white;
+  }
+
+  .custom-file-upload {
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #f9770f;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  
+  .custom-file-upload input[type="file"] {
+    display: none;
+  }
+
+  .d-none {
+    display: none;
+  }
+
+  .active-button {
+    background-color: #4CAF50; 
+    color: white;
+  }
+
+  

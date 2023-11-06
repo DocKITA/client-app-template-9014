@@ -1,0 +1,17 @@
+.bg-f16827 {
+    background-color: #f16827;
+}
+
+.c-f16827 {
+    color: #f16827;
+}
+
+.sidebar a {
+    color: #8a8a8a;
+    text-decoration: none;
+}
+
+.sidebar a:hover {
+    color: #e96b46;
+    text-decoration: underline;
+}
