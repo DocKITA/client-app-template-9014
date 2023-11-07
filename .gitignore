@@ -141,3 +141,5 @@ server-service.yml
 
 client-deployment.yml
 client-service.yml
+
+cert/
