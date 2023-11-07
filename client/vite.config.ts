@@ -28,7 +28,10 @@ export default defineConfig(({ mode }) => {
         define: {'process.env' : processEnv},
         plugins: [react(), mkcert()],
         server: {
-            https: true,
+            https: {
+                key: 'cert/key.pem',
+                cert: 'cert/cert.pem'
+            },
             host: true,
             proxy: {
                 '/api/': {
