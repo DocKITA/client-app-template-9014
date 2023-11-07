@@ -16,7 +16,9 @@ const react_env_key = [
     "APPLICATION_ALLOW_FOOTER",
     "APPLICATION_LOGO_URL",
     "APPLICATION_ICON_URL",
-    "APPLICATION_FOOTER_CONTENT"
+    "APPLICATION_FOOTER_CONTENT",
+    "REACT_APP_AUTH0_DOMAIN", 
+    "REACT_APP_AUTH0_CLIENT_ID"
 ];
 
 // https://vitejs.dev/config/

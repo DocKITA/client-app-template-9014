@@ -25,6 +25,10 @@ import {
 import "./style/colors.css";
 import "./style/App.css";
 
+import SaaSAuth0 from "./components/auth/SaasAuth0";
+import { useAuth0 } from "@auth0/auth0-react";
+import { User } from "@auth0/auth0-spa-js";
+
 import { SiGoogleforms } from "react-icons/si";
 import {
   MdDashboard,
@@ -45,11 +49,17 @@ const profilePic = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
 const Footer = () => {
   return (
-    <footer style={{ backgroundColor: process.env.APPLICATION_THEME_COLOR, padding: "15px 0" }}>
+    <footer
+      style={{
+        backgroundColor: process.env.APPLICATION_THEME_COLOR,
+        padding: "15px 0",
+      }}
+    >
       <Container>
         <Row>
           <Col className="text-center text-white">
-            {process.env.APPLICATION_FOOTER_CONTENT && process.env.APPLICATION_FOOTER_CONTENT}
+            {process.env.APPLICATION_FOOTER_CONTENT &&
+              process.env.APPLICATION_FOOTER_CONTENT}
           </Col>
         </Row>
       </Container>
@@ -58,6 +68,7 @@ const Footer = () => {
 };
 
 const App = () => {
+  const { isAuthenticated, isLoading, user, logout } = useAuth0();
   const headerStyle = {
     display: "flex",
     justifyContent: "space-between",
@@ -86,28 +97,43 @@ const App = () => {
                 </a>
               </div>
               <div style={{ display: "flex", alignItems: "center" }}>
-                <Image
-                  width="40px"
-                  src={profilePic}
-                  alt="Profile Pic"
-                  roundedCircle
-                  style={{ marginRight: "10px" }}
-                />
-                <Nav style={{ marginRight: "10px" }}>
-                  <NavDropdown title="Name" id="basic-nav-dropdown">
-                    <NavDropdown.Item href="/page1">Profile</NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item href="/logout">Logout</NavDropdown.Item>
-                  </NavDropdown>
-                  <style>
-                    {`
-      .dropdown-menu {
-        left: auto !important;
-        right: 0 !important;
-      }
-    `}
-                  </style>
-                </Nav>
+                {isAuthenticated ? (
+                  <>
+                    <Image
+                      width="40px"
+                      src={user.picture}
+                      alt="Profile Pic"
+                      roundedCircle
+                      style={{ marginRight: "10px" }}
+                    />
+                    <Nav style={{ marginRight: "10px" }}>
+                      <NavDropdown
+                        title={user.name || "Profile"}
+                        id="basic-nav-dropdown"
+                      >
+                        <NavDropdown.Item href="/profile">
+                          Profile
+                        </NavDropdown.Item>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Item onClick={() => logout()}>
+                          Logout
+                        </NavDropdown.Item>
+                      </NavDropdown>
+                      <style>
+                        {`
+                          .dropdown-menu {
+                            left: auto !important;
+                            right: 0 !important;
+                          }
+                        `}
+                      </style>
+                    </Nav>
+                  </>
+                ) : (
+                  <Nav.Link>
+                    <SaaSAuth0 />
+                  </Nav.Link>
+                )}
               </div>
             </Container>
           </Navbar>
