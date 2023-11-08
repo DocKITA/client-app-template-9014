@@ -26,6 +26,8 @@ import "./style/colors.css";
 import "./style/App.css";
 
 import SaaSAuth0 from "./components/auth/SaasAuth0";
+import Profile from "./components/user/Profile";
+import Home from "./Home";
 import { useAuth0 } from "@auth0/auth0-react";
 import { User } from "@auth0/auth0-spa-js";
 
@@ -69,6 +71,13 @@ const Footer = () => {
 
 const App = () => {
     const { isAuthenticated, isLoading, user, logout } = useAuth0();
+    const [routes, setRoutes] = useState<RouteConfig[]>([]);
+
+    const load_routes = () => {
+        const route_list: RouteConfig[] = [];
+        setRoutes(route_list);
+    };
+
     const headerStyle = {
         display: "flex",
         justifyContent: "space-between",
@@ -80,6 +89,10 @@ const App = () => {
     const logoStyle = {
         height: "40px",
     };
+
+    useEffect(() => {
+        load_routes();
+    }, []);
 
     return (
         <Router>
@@ -125,14 +138,22 @@ const App = () => {
                                                 title={user.name || "Profile"}
                                                 id="basic-nav-dropdown"
                                             >
-                                                <NavDropdown.Item href="/profile">
-                                                    Profile
+                                                <NavDropdown.Item>
+                                                    <Link
+                                                        to={`./${
+                                                            user &&
+                                                            user.nickname
+                                                        }`}
+                                                        className="text-decoration-none text-dark"
+                                                    >
+                                                        Profile
+                                                    </Link>
                                                 </NavDropdown.Item>
                                                 <NavDropdown.Divider />
                                                 <NavDropdown.Item
                                                     onClick={() => logout()}
                                                 >
-                                                    Logout
+                                                    Sign Out
                                                 </NavDropdown.Item>
                                             </NavDropdown>
                                             <style>
@@ -153,8 +174,23 @@ const App = () => {
                             </div>
                         </Container>
                     </Navbar>
+
                     <Container fluid className="p-4">
-                        {/* content can go here */}
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <Home
+                                        isAuthenticated={isAuthenticated}
+                                        user={user as User}
+                                    />
+                                }
+                            />
+                            <Route
+                                path="/:profile_id/*"
+                                element={<Profile />}
+                            />
+                        </Routes>
                     </Container>
                     {process.env.APPLICATION_ALLOW_FOOTER === "true" && (
                         <div
