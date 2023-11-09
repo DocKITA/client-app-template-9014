@@ -25,7 +25,7 @@ import {
 import "./style/colors.css";
 import "./style/App.css";
 
-import SaaSAuth0 from "./components/auth/SaasAuth0";
+import SaaSAuth0 from "./components/auth/SaaSAuth0";
 import Profile from "./components/user/Profile";
 import Home from "./Home";
 import { useAuth0 } from "@auth0/auth0-react";
