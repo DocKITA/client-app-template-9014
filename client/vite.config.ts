@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
         server: {
             https: true,
             host: true,
-            port: process.env.REACT_APP_CLIENT_URL
+            port: process.env.REACT_APP_CLIENT_URL,
             proxy: {
                 '/api/': {
                     target: process.env.REACT_APP_SERVER_URL,
