@@ -53,15 +53,15 @@ const Footer = () => {
     return (
         <footer
             style={{
-                backgroundColor: process.env.APPLICATION_THEME_COLOR,
+                backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
                 padding: "15px 0",
             }}
         >
             <Container>
                 <Row>
                     <Col className="text-center text-white">
-                        {process.env.APPLICATION_FOOTER_CONTENT &&
-                            process.env.APPLICATION_FOOTER_CONTENT}
+                        {process.env.REACT_APP_APPLICATION_FOOTER_CONTENT &&
+                            process.env.REACT_APP_APPLICATION_FOOTER_CONTENT}
                     </Col>
                 </Row>
             </Container>
@@ -82,7 +82,7 @@ const App = () => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: process.env.APPLICATION_THEME_COLOR,
+        backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
         padding: "15px 0",
     };
 
@@ -158,11 +158,11 @@ const App = () => {
                                             </NavDropdown>
                                             <style>
                                                 {`
-                          .dropdown-menu {
-                            left: auto !important;
-                            right: 0 !important;
-                          }
-                        `}
+                                                    .dropdown-menu {
+                                                        left: auto !important;
+                                                        right: 0 !important;
+                                                    }
+                                                `}
                                             </style>
                                         </Nav>
                                     </>
@@ -192,7 +192,7 @@ const App = () => {
                             />
                         </Routes>
                     </Container>
-                    {process.env.APPLICATION_ALLOW_FOOTER === "true" && (
+                    {process.env.REACT_APP_APPLICATION_ALLOW_FOOTER === "true" && (
                         <div
                             className="footer"
                             style={{
