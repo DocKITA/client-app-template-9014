@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
         define: {'process.env' : processEnv},
         plugins: [react(), mkcert()],
         server: {
-            // https: true,
+            https: true,
             host: true,
             port: parseInt(process.env.REACT_APP_CLIENT_URL),
             proxy: {

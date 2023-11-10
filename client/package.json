@@ -32,6 +32,7 @@
         "http-proxy-middleware": "^2.0.6",
         "jquery": "^3.7.1",
         "jspdf": "^2.5.1",
+        "mkcert": "^3.2.0",
         "openssl": "^2.0.0",
         "path": "^0.12.7",
         "popper.js": "^1.16.1",
