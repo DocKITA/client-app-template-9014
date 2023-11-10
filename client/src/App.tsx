@@ -70,7 +70,7 @@ const Footer = () => {
 };
 
 const App = () => {
-    const { isAuthenticated, isLoading, user, logout } = useAuth0();
+    const { isAuthenticated, isLoading, user, loginWithRedirect, logout } = useAuth0();
     const [routes, setRoutes] = useState<RouteConfig[]>([]);
 
     const load_routes = () => {
@@ -168,7 +168,12 @@ const App = () => {
                                     </>
                                 ) : (
                                     <Nav.Link>
-                                        <SaaSAuth0 />
+                                        <Button variant="outline-light" onClick={() => loginWithRedirect()}>
+                                            Sign Up
+                                        </Button>
+                                        <Button variant="outline-light" onClick={() => logout()}>
+                                            Sign Out
+                                        </Button>
                                     </Nav.Link>
                                 )}
                             </div>
