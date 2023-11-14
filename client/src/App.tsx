@@ -91,6 +91,7 @@ const App = () => {
     };
 
     useEffect(() => {
+        document.title = `${process.env.REACT_APP_NAME}`
         load_routes();
     }, []);
 
@@ -179,36 +180,51 @@ const App = () => {
                             </div>
                         </Container>
                     </Navbar>
-
-                    <Container fluid className="p-4">
-                        <Routes>
-                            <Route
-                                path="/"
-                                element={
-                                    <Home
-                                        isAuthenticated={isAuthenticated}
-                                        user={user as User}
-                                    />
-                                }
-                            />
-                            <Route
-                                path="/:profile_id/*"
-                                element={<Profile />}
-                            />
-                        </Routes>
-                    </Container>
-                    {process.env.REACT_APP_APPLICATION_ALLOW_FOOTER === "true" && (
-                        <div
-                            className="footer"
-                            style={{
-                                position: "fixed",
-                                bottom: 0,
-                                width: "100%",
-                            }}
-                        >
-                            <Footer />
-                        </div>
-                    )}
+                    {
+                        isLoading ? (
+                            <Row className="w-100 text-center align-items-center">
+                                <Col>
+                                    <p className="fs-2">
+                                        <Spinner animation="border" variant="secondary">
+                                            <p>Loading...</p>
+                                        </Spinner>
+                                    </p>
+                                </Col>
+                            </Row>    
+                        ) : (
+                            <>
+                                <Container fluid className="p-4">
+                                    <Routes>
+                                        <Route
+                                            path="/"
+                                            element={
+                                                <Home
+                                                    isAuthenticated={isAuthenticated}
+                                                    user={user as User}
+                                                />
+                                            }
+                                        />
+                                        <Route
+                                            path="/:profile_id/*"
+                                            element={<Profile />}
+                                        />
+                                    </Routes>
+                                </Container>
+                                {process.env.REACT_APP_APPLICATION_ALLOW_FOOTER === "true" && (
+                                    <div
+                                        className="footer"
+                                        style={{
+                                            position: "fixed",
+                                            bottom: 0,
+                                            width: "100%",
+                                        }}
+                                    >
+                                        <Footer />
+                                    </div>
+                                )}
+                            </>
+                        )
+                    }
                 </div>
             </div>
         </Router>

@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const react_env_key = [
+    "REACT_APP_NAME",
     "REACT_APP_AUTH0_DOMAIN",
     "REACT_APP_AUTH0_CLIENT_ID",
     "REACT_APP_FIREBASE_APIKEY",
