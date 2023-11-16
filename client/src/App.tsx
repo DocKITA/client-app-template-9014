@@ -46,7 +46,7 @@ type RouteConfig = {
     pathKey: string;
 };
 
-const Logo = process.env.APPLICATION_LOGO_URL;
+const Logo = process.env.REACT_APP_APPLICATION_LOGO_URL;
 const profilePic = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
 const Footer = () => {
@@ -92,6 +92,19 @@ const App = () => {
 
     useEffect(() => {
         document.title = `${process.env.REACT_APP_NAME}`
+        const linkElement = document.createElement('link');
+
+        linkElement.rel = 'icon';
+        linkElement.type = 'image/x-icon';
+        linkElement.href = `${process.env.REACT_APP_APPLICATION_ICON_URL}`;
+
+        const existingLink = document.querySelector('link=[rel="icon"]');
+        if (existingLink) {
+            document.head.removeChild(existingLink);
+        }
+
+        document.head.appendChild(linkElement);
+
         load_routes();
     }, []);
 
@@ -185,9 +198,8 @@ const App = () => {
                             <Row className="w-100 text-center align-items-center">
                                 <Col>
                                     <p className="fs-2">
-                                        <Spinner animation="border" variant="secondary">
-                                            <p>Loading...</p>
-                                        </Spinner>
+                                        <Spinner animation="border" variant="secondary" />
+                                        <p>Loading...</p>
                                     </p>
                                 </Col>
                             </Row>    
