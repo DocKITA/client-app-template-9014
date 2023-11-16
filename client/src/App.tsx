@@ -91,19 +91,24 @@ const App = () => {
     };
 
     useEffect(() => {
-        document.title = `${process.env.REACT_APP_NAME}`
-        const linkElement = document.createElement('link');
+        document.title = `${process.env.REACT_APP_NAME}`;
+        const linkElement = document.createElement("link");
 
-        linkElement.rel = 'icon';
-        linkElement.type = 'image/x-icon';
+        linkElement.rel = "icon";
+        linkElement.type = "image/x-icon";
         linkElement.href = `${process.env.REACT_APP_APPLICATION_ICON_URL}`;
 
-        const existingLink = document.querySelector('link=[rel="icon"]');
+        const existingLink = document.querySelector('link[rel="icon"]');
         if (existingLink) {
             document.head.removeChild(existingLink);
         }
 
         document.head.appendChild(linkElement);
+
+        if(!isLoading) {
+            console.log(`Is Authenticated: ${isAuthenticated}`);
+            console.log(`User: ${user}`);
+        }
 
         load_routes();
     }, []);
@@ -182,10 +187,16 @@ const App = () => {
                                     </>
                                 ) : (
                                     <Nav.Link>
-                                        <Button variant="outline-light" onClick={() => loginWithRedirect()}>
+                                        <Button
+                                            variant="outline-light"
+                                            onClick={() => loginWithRedirect()}
+                                        >
                                             Sign Up
                                         </Button>
-                                        <Button variant="outline-light" onClick={() => logout()}>
+                                        <Button
+                                            variant="outline-light"
+                                            onClick={() => logout()}
+                                        >
                                             Sign Out
                                         </Button>
                                     </Nav.Link>
@@ -193,50 +204,54 @@ const App = () => {
                             </div>
                         </Container>
                     </Navbar>
-                    {
-                        isLoading ? (
-                            <Row className="w-100 text-center align-items-center">
-                                <Col>
-                                    <p className="fs-2">
-                                        <Spinner animation="border" variant="secondary" />
-                                        <p>Loading...</p>
-                                    </p>
-                                </Col>
-                            </Row>    
-                        ) : (
-                            <>
-                                <Container fluid className="p-4">
-                                    <Routes>
-                                        <Route
-                                            path="/"
-                                            element={
-                                                <Home
-                                                    isAuthenticated={isAuthenticated}
-                                                    user={user as User}
-                                                />
-                                            }
-                                        />
-                                        <Route
-                                            path="/:profile_id/*"
-                                            element={<Profile />}
-                                        />
-                                    </Routes>
-                                </Container>
-                                {process.env.REACT_APP_APPLICATION_ALLOW_FOOTER === "true" && (
-                                    <div
-                                        className="footer"
-                                        style={{
-                                            position: "fixed",
-                                            bottom: 0,
-                                            width: "100%",
-                                        }}
-                                    >
-                                        <Footer />
-                                    </div>
-                                )}
-                            </>
-                        )
-                    }
+                    {isLoading ? (
+                        <Row className="w-100 text-center align-items-center">
+                            <Col>
+                                <p className="fs-2">
+                                    <Spinner
+                                        animation="border"
+                                        variant="secondary"
+                                    />
+                                    <p>Loading...</p>
+                                </p>
+                            </Col>
+                        </Row>
+                    ) : (
+                        <>
+                            <Container fluid className="p-4">
+                                <Routes>
+                                    <Route
+                                        path="/"
+                                        element={
+                                            <Home
+                                                isAuthenticated={
+                                                    isAuthenticated
+                                                }
+                                                user={user as User}
+                                            />
+                                        }
+                                    />
+                                    <Route path="/:profile_id/*" element={<Profile />} />
+                                </Routes>
+                                Is Authenticated: {isAuthenticated.toString()}
+                                <hr />
+                                User: {user?.nickname}
+                            </Container>
+                            {process.env.REACT_APP_APPLICATION_ALLOW_FOOTER ===
+                                "true" && (
+                                <div
+                                    className="footer"
+                                    style={{
+                                        position: "fixed",
+                                        bottom: 0,
+                                        width: "100%",
+                                    }}
+                                >
+                                    <Footer />
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
         </Router>
