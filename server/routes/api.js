@@ -7,6 +7,8 @@ router.use(cors());
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
+router.use("/auth", require("./auth/auth"));
+
 // For connection testing purpose, PLEASE DO NOT REMOVE
 router.get('/', async (req, res) => {
     try {
