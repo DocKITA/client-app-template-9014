@@ -70,13 +70,14 @@ const Footer = () => {
 };
 
 const App = () => {
-  const { isAuthenticated, isLoading, user, logout, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, isLoading, user, logout, loginWithRedirect } =
+    useAuth0();
   const [routes, setRoutes] = useState<RouteConfig[]>([]);
 
   const load_routes = () => {
     const route_list: RouteConfig[] = [];
     setRoutes(route_list);
-};
+  };
 
   const headerStyle = {
     display: "flex",
@@ -92,21 +93,21 @@ const App = () => {
 
   useEffect(() => {
     load_routes();
-}, []);
+  }, []);
 
-useEffect(() => {
-  const handleRedirectCallback = async () => {
-    await loginWithRedirect();
-  };
+  useEffect(() => {
+    const handleRedirectCallback = async () => {
+      await loginWithRedirect();
+    };
 
-  if (!isAuthenticated && !isLoading) {
-    handleRedirectCallback();
-  }
+    if (!isAuthenticated && !isLoading) {
+      handleRedirectCallback();
+    }
 
-  if(!isLoading && isAuthenticated) {
-    console.log(`User: `, user);
-  }
-}, [isAuthenticated, isLoading, loginWithRedirect]);
+    if (!isLoading && isAuthenticated) {
+      console.log(`User: `, user);
+    }
+  }, [isAuthenticated, isLoading, loginWithRedirect]);
 
   return (
     <Router>
@@ -161,24 +162,30 @@ useEffect(() => {
                       </style>
                     </Nav>
                   </>
-                ) : (
-                  null
-                )}
+                ) : null}
               </div>
             </Container>
           </Navbar>
-          
+
           <Container fluid className="p-4">
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <Home isAuthenticated={isAuthenticated} user={user as User} />
-                }
-              />
-              <Route path="/:profile_id/*" element={<Profile />} />
-            </Routes>
+            <Row className="justify-content-center">
+              <Col xs="12" md="8">
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      <Home
+                        isAuthenticated={isAuthenticated}
+                        user={user as User}
+                      />
+                    }
+                  />
+                  <Route path="/:profile_id/*" element={<Profile />} />
+                </Routes>
+              </Col>
+            </Row>
           </Container>
+
           {process.env.REACT_APP_APPLICATION_ALLOW_FOOTER === "true" && (
             <div
               className="footer"
