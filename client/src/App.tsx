@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
 import {
-  BrowserRouter as Router,
-  Link,
-  Route,
-  Routes,
-  useNavigate,
+    BrowserRouter as Router,
+    Link,
+    Route,
+    Routes,
+    useNavigate,
 } from "react-router-dom";
 import {
-  Breadcrumb,
-  Col,
-  Container,
-  Row,
-  Navbar,
-  Image,
-  Nav,
-  Dropdown,
-  NavDropdown,
-  Accordion,
-  Button,
-  Offcanvas,
-  Spinner,
+    Breadcrumb,
+    Col,
+    Container,
+    Row,
+    Navbar,
+    Image,
+    Nav,
+    Dropdown,
+    NavDropdown,
+    Accordion,
+    Button,
+    Offcanvas,
+    Spinner,
 } from "react-bootstrap";
 
 import "./style/colors.css";
@@ -33,20 +33,20 @@ import { User } from "@auth0/auth0-spa-js";
 
 import { SiGoogleforms } from "react-icons/si";
 import {
-  MdDashboard,
-  MdNotifications,
-  MdOutlineAppRegistration,
-  MdSettings,
-  MdPieChart,
+    MdDashboard,
+    MdNotifications,
+    MdOutlineAppRegistration,
+    MdSettings,
+    MdPieChart,
 } from "react-icons/md";
 
 type RouteConfig = {
-  path: string;
-  element: JSX.Element;
-  pathKey: string;
+    path: string;
+    element: JSX.Element;
+    pathKey: string;
 };
 
-const Logo = process.env.APPLICATION_LOGO_URL;
+const Logo = process.env.REACT_APP_APPLICATION_LOGO_URL;
 const profilePic = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
 const Footer = () => {

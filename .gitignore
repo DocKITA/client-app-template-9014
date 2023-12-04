@@ -134,6 +134,7 @@ dist
 favicon.ico
 
 docker-compose.yml
+docker-compose-swarm.yml
 
 Dockerfile
 server-deployment.yml
