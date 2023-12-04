@@ -5,9 +5,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const react_env_key = [
-    "REACT_APP_NAME",
-    "REACT_APP_AUTH0_DOMAIN",
-    "REACT_APP_AUTH0_CLIENT_ID",
     "REACT_APP_FIREBASE_APIKEY",
     "REACT_APP_FIREBASE_AUTHDOMAIN",
     "REACT_APP_FIREBASE_PROJECTID",
@@ -21,8 +18,7 @@ const react_env_key = [
     "REACT_APP_APPLICATION_ICON_URL",
     "REACT_APP_APPLICATION_FOOTER_CONTENT",
     "REACT_APP_AUTH0_DOMAIN", 
-    "REACT_APP_AUTH0_CLIENT_ID",
-    "REACT_APP_APPLICATION_ICON_URL"
+    "REACT_APP_AUTH0_CLIENT_ID"
 ];
 
 // https://vitejs.dev/config/
@@ -39,7 +35,7 @@ export default defineConfig(({ mode }) => {
                 cert: 'cert/cert.pem'
             },
             host: true,
-            port: parseInt(process.env.REACT_APP_CLIENT_URL),
+            port: parseInt(process.env.REACT_APP_CLIENt_URL),
             proxy: {
                 '/api/': {
                     target: process.env.REACT_APP_SERVER_URL,

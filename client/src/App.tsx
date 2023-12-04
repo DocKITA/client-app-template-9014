@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
 import {
-    BrowserRouter as Router,
-    Link,
-    Route,
-    Routes,
-    useNavigate,
+  BrowserRouter as Router,
+  Link,
+  Route,
+  Routes,
+  useNavigate,
 } from "react-router-dom";
 import {
-    Breadcrumb,
-    Col,
-    Container,
-    Row,
-    Navbar,
-    Image,
-    Nav,
-    Dropdown,
-    NavDropdown,
-    Accordion,
-    Button,
-    Offcanvas,
-    Spinner,
+  Breadcrumb,
+  Col,
+  Container,
+  Row,
+  Navbar,
+  Image,
+  Nav,
+  Dropdown,
+  NavDropdown,
+  Accordion,
+  Button,
+  Offcanvas,
+  Spinner,
 } from "react-bootstrap";
 
 import "./style/colors.css";
@@ -33,17 +33,17 @@ import { User } from "@auth0/auth0-spa-js";
 
 import { SiGoogleforms } from "react-icons/si";
 import {
-    MdDashboard,
-    MdNotifications,
-    MdOutlineAppRegistration,
-    MdSettings,
-    MdPieChart,
+  MdDashboard,
+  MdNotifications,
+  MdOutlineAppRegistration,
+  MdSettings,
+  MdPieChart,
 } from "react-icons/md";
 
 type RouteConfig = {
-    path: string;
-    element: JSX.Element;
-    pathKey: string;
+  path: string;
+  element: JSX.Element;
+  pathKey: string;
 };
 
 const Logo = process.env.REACT_APP_APPLICATION_LOGO_URL;
@@ -53,15 +53,15 @@ const Footer = () => {
   return (
     <footer
       style={{
-        backgroundColor: process.env.APPLICATION_THEME_COLOR,
+        backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
         padding: "15px 0",
       }}
     >
       <Container>
         <Row>
           <Col className="text-center text-white">
-            {process.env.APPLICATION_FOOTER_CONTENT &&
-              process.env.APPLICATION_FOOTER_CONTENT}
+            {process.env.REACT_APP_APPLICATION_FOOTER_CONTENT &&
+              process.env.REACT_APP_APPLICATION_FOOTER_CONTENT}
           </Col>
         </Row>
       </Container>
@@ -70,7 +70,7 @@ const Footer = () => {
 };
 
 const App = () => {
-  const { isAuthenticated, isLoading, user, logout } = useAuth0();
+  const { isAuthenticated, isLoading, user, logout, loginWithRedirect } = useAuth0();
   const [routes, setRoutes] = useState<RouteConfig[]>([]);
 
   const load_routes = () => {
@@ -82,7 +82,7 @@ const App = () => {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: process.env.APPLICATION_THEME_COLOR,
+    backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
     padding: "15px 0",
   };
 
@@ -93,6 +93,20 @@ const App = () => {
   useEffect(() => {
     load_routes();
 }, []);
+
+useEffect(() => {
+  const handleRedirectCallback = async () => {
+    await loginWithRedirect();
+  };
+
+  if (!isAuthenticated && !isLoading) {
+    handleRedirectCallback();
+  }
+
+  if(!isLoading && isAuthenticated) {
+    console.log(`User: `, user);
+  }
+}, [isAuthenticated, isLoading, loginWithRedirect]);
 
   return (
     <Router>
@@ -110,7 +124,7 @@ const App = () => {
                 </a>
               </div>
               <div style={{ display: "flex", alignItems: "center" }}>
-                {isAuthenticated ? (
+                {isAuthenticated && !isLoading ? (
                   <>
                     <Image
                       width="40px"
@@ -148,9 +162,7 @@ const App = () => {
                     </Nav>
                   </>
                 ) : (
-                  <Nav.Link>
-                    <SaaSAuth0 />
-                  </Nav.Link>
+                  null
                 )}
               </div>
             </Container>
@@ -167,7 +179,7 @@ const App = () => {
               <Route path="/:profile_id/*" element={<Profile />} />
             </Routes>
           </Container>
-          {process.env.APPLICATION_ALLOW_FOOTER === "true" && (
+          {process.env.REACT_APP_APPLICATION_ALLOW_FOOTER === "true" && (
             <div
               className="footer"
               style={{ position: "fixed", bottom: 0, width: "100%" }}
