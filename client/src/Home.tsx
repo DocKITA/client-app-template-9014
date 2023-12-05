@@ -2,6 +2,7 @@ import React from "react";
 import { User } from "@auth0/auth0-spa-js";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
+import routesData from "./../routes.json";
 
 interface UserProps {
   isAuthenticated: boolean;
@@ -27,48 +28,24 @@ const Home = (userProps: UserProps) => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td style={{ textAlign: "center" }}>1</td>
-            <td>Page 1</td>
-            <td style={{ textAlign: "center" }}>
-              <Button
-                variant="outline-light"
-                style={{
-                  backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
-                }}
-              >
-                View
-              </Button>
-            </td>
-          </tr>
-          <tr>
-            <td style={{ textAlign: "center" }}>2</td>
-            <td>Page 2</td>
-            <td style={{ textAlign: "center" }}>
-            <Button
-                variant="outline-light"
-                style={{
-                  backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
-                }}
-              >
-                View
-              </Button>
-            </td>
-          </tr>
-          <tr>
-            <td style={{ textAlign: "center" }}>3</td>
-            <td>Page 3</td>
-            <td style={{ textAlign: "center" }}>
-            <Button
-                variant="outline-light"
-                style={{
-                  backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
-                }}
-              >
-                View
-              </Button>
-            </td>
-          </tr>
+          {routesData["form-list"].map((form, index) => (
+            <tr key={index}>
+              <td style={{ textAlign: "center" }}>{index + 1}</td>
+              <td>{form.name}</td>
+              <td style={{ textAlign: "center" }}>
+                <Button
+                  variant="outline-light"
+                  style={{
+                    backgroundColor:
+                      process.env.REACT_APP_APPLICATION_THEME_COLOR,
+                  }}
+                  href={`/${form.url}`}
+                >
+                  View
+                </Button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </Table>
     </div>
