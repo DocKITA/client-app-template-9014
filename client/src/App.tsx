@@ -30,6 +30,7 @@ import Profile from "./components/user/Profile";
 import Home from "./Home";
 import { useAuth0 } from "@auth0/auth0-react";
 import { User } from "@auth0/auth0-spa-js";
+import FormRecordList from "./components/form/FormRecordList";
 
 import { SiGoogleforms } from "react-icons/si";
 import {
@@ -141,7 +142,7 @@ const App = () => {
                       >
                         <NavDropdown.Item>
                           <Link
-                            to={`./${user && user.nickname}`}
+                            to={`./acc/${user && user.nickname}`}
                             className="text-decoration-none text-dark"
                           >
                             Profile
@@ -174,13 +175,10 @@ const App = () => {
                   <Route
                     path="/"
                     element={
-                      <Home
-                        isAuthenticated={isAuthenticated}
-                        user={user as User}
-                      />
+                      <Home />
                     }
                   />
-                  <Route path="/:profile_id/*" element={<Profile />} />
+                  <Route path="/acc/:profile_id/*" element={<Profile />} />
                 </Routes>
               </Col>
             </Row>
