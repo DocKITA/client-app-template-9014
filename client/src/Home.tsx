@@ -3,7 +3,7 @@ import { User } from "@auth0/auth0-spa-js";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import routesData from "./../routes.json";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import FormRecordList from "./components/form/FormRecordList";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -14,8 +14,11 @@ interface UserProps {
 
 const Main = () => {
 const { isAuthenticated, user } = useAuth0;
+const navigate = useNavigate();
 
-// Implement a onClick function for that button, send the data back to parent component
+const handleViewClick = (url: string) => {
+    navigate(`/f/${url}`);
+};
 
   return (
     <div>
@@ -44,7 +47,7 @@ const { isAuthenticated, user } = useAuth0;
                     backgroundColor:
                       process.env.REACT_APP_APPLICATION_THEME_COLOR,
                   }}
-                  href={`/${form.url}`}
+                  onClick={() => handleViewClick(form.url)}
                 >
                   View
                 </Button>
@@ -62,7 +65,6 @@ const Home = () => {
   return (
     <Routes>
       <Route path="/" element={<Main />} />
-      <Route path="/f/*" element={<FormRecordList tableName="" />} />
     </Routes>  
   )
 };

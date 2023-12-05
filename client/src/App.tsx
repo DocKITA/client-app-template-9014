@@ -40,6 +40,7 @@ import {
   MdSettings,
   MdPieChart,
 } from "react-icons/md";
+import routesData from "./../routes.json";
 
 type RouteConfig = {
   path: string;
@@ -74,6 +75,8 @@ const App = () => {
   const { isAuthenticated, isLoading, user, logout, loginWithRedirect } =
     useAuth0();
   const [routes, setRoutes] = useState<RouteConfig[]>([]);
+  const formRoutes = routesData['form-list'];
+  const navigate = useNavigate();
 
   const load_routes = () => {
     const route_list: RouteConfig[] = [];
@@ -109,6 +112,12 @@ const App = () => {
       console.log(`User: `, user);
     }
   }, [isAuthenticated, isLoading, loginWithRedirect]);
+
+  useEffect(() => {
+    formRoutes.forEach((form) => {
+      navigate(`./f/${form.url}`, { state: { tableName: form.table } });
+    });
+  }, [formRoutes, navigate]);
 
   return (
     <Router>
@@ -172,13 +181,14 @@ const App = () => {
             <Row className="justify-content-center">
               <Col xs="12" md="8">
                 <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <Home />
-                    }
-                  />
+                  <Route path="/" element={<Home />}/>
                   <Route path="/acc/:profile_id/*" element={<Profile />} />
+                  {/* 
+                  Need to write a useEffect to load the route content
+                    Create a loop for route list
+                          <Route path `/f/${form.url}` element = FormRecordList tableName = form.tableName />
+                  */}
+                  <Route path="/f/:form_list_url/*" element={<FormRecordList tableName="" />} />
                 </Routes>
               </Col>
             </Row>

@@ -1,7 +1,7 @@
 {
     "form-list": [
         {
-            "name": "Test 1",
+            "name": "Record List",
             "url": "test-1",
             "table": "test_1",
             "file": "test-1.json"
