@@ -856,7 +856,7 @@ const Main = () => {
                                                                     variant="outline-light"
                                                                     style={{
                                                                         backgroundColor:
-                                                                            "#f9770f",
+                                                                        process.env.REACT_APP_APPLICATION_THEME_COLOR,
                                                                         color: "white",
                                                                         width: "100%",
                                                                     }}

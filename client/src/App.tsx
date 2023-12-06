@@ -1,261 +1,211 @@
 import { useEffect, useState } from "react";
 import {
-    BrowserRouter as Router,
-    Link,
-    Route,
-    Routes,
-    useNavigate,
+  BrowserRouter as Router,
+  Link,
+  Route,
+  Routes,
+  useNavigate,
 } from "react-router-dom";
 import {
-    Breadcrumb,
-    Col,
-    Container,
-    Row,
-    Navbar,
-    Image,
-    Nav,
-    Dropdown,
-    NavDropdown,
-    Accordion,
-    Button,
-    Offcanvas,
-    Spinner,
+  Breadcrumb,
+  Col,
+  Container,
+  Row,
+  Navbar,
+  Image,
+  Nav,
+  Dropdown,
+  NavDropdown,
+  Accordion,
+  Button,
+  Offcanvas,
+  Spinner,
 } from "react-bootstrap";
 
 import "./style/colors.css";
 import "./style/App.css";
 
-import SaaSAuth0 from "./components/auth/SaaSAuth0";
+import SaaSAuth0 from "./components/auth/SaasAuth0";
 import Profile from "./components/user/Profile";
 import Home from "./Home";
 import { useAuth0 } from "@auth0/auth0-react";
 import { User } from "@auth0/auth0-spa-js";
+import FormRecordList from "./components/form/FormRecordList";
 
 import { SiGoogleforms } from "react-icons/si";
 import {
-    MdDashboard,
-    MdNotifications,
-    MdOutlineAppRegistration,
-    MdSettings,
-    MdPieChart,
+  MdDashboard,
+  MdNotifications,
+  MdOutlineAppRegistration,
+  MdSettings,
+  MdPieChart,
 } from "react-icons/md";
+import routesData from "./../routes.json";
 
 type RouteConfig = {
-    path: string;
-    element: JSX.Element;
-    pathKey: string;
+  path: string;
+  element: JSX.Element;
+  pathKey: string;
 };
 
 const Logo = process.env.REACT_APP_APPLICATION_LOGO_URL;
 const profilePic = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
 const Footer = () => {
-    return (
-        <footer
-            style={{
-                backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
-                padding: "15px 0",
-            }}
-        >
-            <Container>
-                <Row>
-                    <Col className="text-center text-white">
-                        {process.env.REACT_APP_APPLICATION_FOOTER_CONTENT &&
-                            process.env.REACT_APP_APPLICATION_FOOTER_CONTENT}
-                    </Col>
-                </Row>
-            </Container>
-        </footer>
-    );
+  return (
+    <footer
+      style={{
+        backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
+        padding: "15px 0",
+      }}
+    >
+      <Container>
+        <Row>
+          <Col className="text-center text-white">
+            {process.env.REACT_APP_APPLICATION_FOOTER_CONTENT &&
+              process.env.REACT_APP_APPLICATION_FOOTER_CONTENT}
+          </Col>
+        </Row>
+      </Container>
+    </footer>
+  );
 };
 
 const App = () => {
-    const { isAuthenticated, isLoading, user, loginWithRedirect, logout } = useAuth0();
-    const [routes, setRoutes] = useState<RouteConfig[]>([]);
+  const { isAuthenticated, isLoading, user, logout, loginWithRedirect } =
+    useAuth0();
+  const [routes, setRoutes] = useState<RouteConfig[]>([]);
+  const formRoutes = routesData['form-list'];
+  const navigate = useNavigate();
 
-    const load_routes = () => {
-        const route_list: RouteConfig[] = [];
-        setRoutes(route_list);
+  const load_routes = () => {
+    const route_list: RouteConfig[] = [];
+    setRoutes(route_list);
+  };
+
+  const headerStyle = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
+    padding: "15px 0",
+  };
+
+  const logoStyle = {
+    height: "40px",
+  };
+
+  useEffect(() => {
+    load_routes();
+  }, []);
+
+  useEffect(() => {
+    const handleRedirectCallback = async () => {
+      await loginWithRedirect();
     };
 
-    const headerStyle = {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
-        padding: "15px 0",
-    };
+    if (!isAuthenticated && !isLoading) {
+      handleRedirectCallback();
+    }
 
-    const logoStyle = {
-        height: "40px",
-    };
+    if (!isLoading && isAuthenticated) {
+      console.log(`User: `, user);
+    }
+  }, [isAuthenticated, isLoading, loginWithRedirect]);
 
-    useEffect(() => {
-        document.title = `${process.env.REACT_APP_NAME}`;
-        const linkElement = document.createElement("link");
+  useEffect(() => {
+    formRoutes.forEach((form) => {
+      navigate(`./f/${form.url}`, { state: { tableName: form.table } });
+    });
+  }, [formRoutes, navigate]);
 
-        linkElement.rel = "icon";
-        linkElement.type = "image/x-icon";
-        linkElement.href = `${process.env.REACT_APP_APPLICATION_ICON_URL}`;
+  return (
+    <Router>
+      <div className="d-flex min-vh-100">
+        {/* Content Container */}
+        <div
+          className="flex-grow-1 d-flex flex-column"
+          style={{ backgroundColor: "#f4f4f4" }}
+        >
+          <Navbar expand="lg" style={headerStyle}>
+            <Container fluid>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <a href="/">
+                  <Image src={Logo} alt="Logo" style={logoStyle} />
+                </a>
+              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {isAuthenticated && !isLoading ? (
+                  <>
+                    <Image
+                      width="40px"
+                      src={user.picture}
+                      alt="Profile Pic"
+                      roundedCircle
+                      style={{ marginRight: "10px" }}
+                    />
+                    <Nav style={{ marginRight: "10px" }}>
+                      <NavDropdown
+                        title={user.name || "Profile"}
+                        id="basic-nav-dropdown"
+                      >
+                        <NavDropdown.Item>
+                          <Link
+                            to={`./acc/${user && user.nickname}`}
+                            className="text-decoration-none text-dark"
+                          >
+                            Profile
+                          </Link>
+                        </NavDropdown.Item>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Item onClick={() => logout()}>
+                          Sign Out
+                        </NavDropdown.Item>
+                      </NavDropdown>
+                      <style>
+                        {`
+                          .dropdown-menu {
+                            left: auto !important;
+                            right: 0 !important;
+                          }
+                        `}
+                      </style>
+                    </Nav>
+                  </>
+                ) : null}
+              </div>
+            </Container>
+          </Navbar>
 
-        const existingLink = document.querySelector('link[rel="icon"]');
-        if (existingLink) {
-            document.head.removeChild(existingLink);
-        }
+          <Container fluid className="p-4">
+            <Row className="justify-content-center">
+              <Col xs="12" md="8">
+                <Routes>
+                  <Route path="/" element={<Home />}/>
+                  <Route path="/acc/:profile_id/*" element={<Profile />} />
+                  {/* 
+                  Need to write a useEffect to load the route content
+                    Create a loop for route list
+                          <Route path `/f/${form.url}` element = FormRecordList tableName = form.tableName />
+                  */}
+                  <Route path="/f/:form_list_url/*" element={<FormRecordList tableName="" />} />
+                </Routes>
+              </Col>
+            </Row>
+          </Container>
 
-        document.head.appendChild(linkElement);
-
-        if(!isLoading) {
-            console.log(`Is Authenticated: ${isAuthenticated}`);
-            console.log(`User: ${user}`);
-        }
-
-        load_routes();
-    }, []);
-
-    return (
-        <Router>
-            <div className="d-flex min-vh-100">
-                {/* Content Container */}
-                <div
-                    className="flex-grow-1 d-flex flex-column"
-                    style={{ backgroundColor: "#f4f4f4" }}
-                >
-                    <Navbar expand="lg" style={headerStyle}>
-                        <Container fluid>
-                            <div
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <a href="/">
-                                    <Image
-                                        src={Logo}
-                                        alt="Logo"
-                                        style={logoStyle}
-                                    />
-                                </a>
-                            </div>
-                            <div
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                }}
-                            >
-                                {isAuthenticated ? (
-                                    <>
-                                        <Image
-                                            width="40px"
-                                            src={user.picture}
-                                            alt="Profile Pic"
-                                            roundedCircle
-                                            style={{ marginRight: "10px" }}
-                                        />
-                                        <Nav style={{ marginRight: "10px" }}>
-                                            <NavDropdown
-                                                title={user.name || "Profile"}
-                                                id="basic-nav-dropdown"
-                                            >
-                                                <NavDropdown.Item>
-                                                    <Link
-                                                        to={`./${
-                                                            user &&
-                                                            user.nickname
-                                                        }`}
-                                                        className="text-decoration-none text-dark"
-                                                    >
-                                                        Profile
-                                                    </Link>
-                                                </NavDropdown.Item>
-                                                <NavDropdown.Divider />
-                                                <NavDropdown.Item
-                                                    onClick={() => logout()}
-                                                >
-                                                    Sign Out
-                                                </NavDropdown.Item>
-                                            </NavDropdown>
-                                            <style>
-                                                {`
-                                                    .dropdown-menu {
-                                                        left: auto !important;
-                                                        right: 0 !important;
-                                                    }
-                                                `}
-                                            </style>
-                                        </Nav>
-                                    </>
-                                ) : (
-                                    <Nav.Link>
-                                        <Button
-                                            variant="outline-light"
-                                            onClick={() => loginWithRedirect()}
-                                        >
-                                            Sign Up
-                                        </Button>
-                                        <Button
-                                            variant="outline-light"
-                                            onClick={() => logout()}
-                                        >
-                                            Sign Out
-                                        </Button>
-                                    </Nav.Link>
-                                )}
-                            </div>
-                        </Container>
-                    </Navbar>
-                    {isLoading ? (
-                        <Row className="w-100 text-center align-items-center">
-                            <Col>
-                                <p className="fs-2">
-                                    <Spinner
-                                        animation="border"
-                                        variant="secondary"
-                                    />
-                                    <p>Loading...</p>
-                                </p>
-                            </Col>
-                        </Row>
-                    ) : (
-                        <>
-                            <Container fluid className="p-4">
-                                <Routes>
-                                    <Route
-                                        path="/"
-                                        element={
-                                            <Home
-                                                isAuthenticated={
-                                                    isAuthenticated
-                                                }
-                                                user={user as User}
-                                            />
-                                        }
-                                    />
-                                    <Route path="/:profile_id/*" element={<Profile />} />
-                                </Routes>
-                                Is Authenticated: {isAuthenticated.toString()}
-                                <hr />
-                                User: {user?.nickname}
-                            </Container>
-                            {process.env.REACT_APP_APPLICATION_ALLOW_FOOTER ===
-                                "true" && (
-                                <div
-                                    className="footer"
-                                    style={{
-                                        position: "fixed",
-                                        bottom: 0,
-                                        width: "100%",
-                                    }}
-                                >
-                                    <Footer />
-                                </div>
-                            )}
-                        </>
-                    )}
-                </div>
+          {process.env.REACT_APP_APPLICATION_ALLOW_FOOTER === "true" && (
+            <div
+              className="footer"
+              style={{ position: "fixed", bottom: 0, width: "100%" }}
+            >
+              <Footer />
             </div>
-        </Router>
-    );
+          )}
+        </div>
+      </div>
+    </Router>
+  );
 };
 
 export default App;
