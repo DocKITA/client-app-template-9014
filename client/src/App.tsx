@@ -76,7 +76,6 @@ const App = () => {
     useAuth0();
   const [routes, setRoutes] = useState<RouteConfig[]>([]);
   const formRoutes = routesData['form-list'];
-  const navigate = useNavigate();
 
   const load_routes = () => {
     const route_list: RouteConfig[] = [];
@@ -112,12 +111,6 @@ const App = () => {
       console.log(`User: `, user);
     }
   }, [isAuthenticated, isLoading, loginWithRedirect]);
-
-  useEffect(() => {
-    formRoutes.forEach((form) => {
-      navigate(`./f/${form.url}`, { state: { tableName: form.table } });
-    });
-  }, [formRoutes, navigate]);
 
   return (
     <Router>
@@ -188,7 +181,7 @@ const App = () => {
                     Create a loop for route list
                           <Route path `/f/${form.url}` element = FormRecordList tableName = form.tableName />
                   */}
-                  <Route path="/f/:form_list_url/*" element={<FormRecordList tableName="" />} />
+                  <Route path="/f/:form_list_url/*" element={<FormRecordList />} />
                 </Routes>
               </Col>
             </Row>

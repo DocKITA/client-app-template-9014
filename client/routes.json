@@ -1,34 +1,16 @@
 {
     "form-list": [
         {
-            "name": "Record List",
-            "url": "test-1",
-            "table": "test_1",
-            "file": "test-1.json"
-        },
-        {
-            "name": "Test 2",
+            "name": "test2",
             "url": "test-2",
             "table": "test_2",
-            "file": "test-2.json"
+            "file": "f69e4c51-e16e-4f29-924f-9b73c1904201"
         },
         {
-            "name": "Test 3",
+            "name": "test3",
             "url": "test-3",
             "table": "test_3",
-            "file": "test-3.json"
-        },
-        {
-            "name": "Test 4",
-            "url": "test-4",
-            "table": "test_4",
-            "file": "test-4.json"
-        },
-        {
-            "name": "Test 5",
-            "url": "test-5",
-            "table": "test_5",
-            "file": "test-5.json"
+            "file": "b0a14cdf-a360-48e4-90c7-9cf7596a6f63"
         }
     ]
 }
