@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link, Route, Routes, useParams } from "react-router-dom";
 import NewRecord from "./NewRecord";
 import ModifyRecord from "./ModifyRecord";
-import Table from "react-bootstrap/Table";
-import Button from "react-bootstrap/Button";
 import routesData from "./../../../routes.json";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Table, Button } from "react-bootstrap";
+
+interface RouteProps {
+    name: string;
+    url: string;
+    table: string;
+    file: string;
+}
 
 interface RecordListProps {
     tableName: string;
@@ -70,22 +75,6 @@ const Main: React.FC<RecordListProps> = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td style={{ textAlign: "center" }}>1</td>
-                            <td>Record 1</td>
-                            <td style={{ textAlign: "center" }}>
-                                <Button
-                                    variant="outline-light"
-                                    style={{
-                                        backgroundColor:
-                                            process.env
-                                                .REACT_APP_APPLICATION_THEME_COLOR,
-                                    }}
-                                >
-                                    View
-                                </Button>
-                            </td>
-                        </tr>
                         {
                             recordList && recordList.map(record => (
                                 <tr key={record.id}>
@@ -118,25 +107,30 @@ const Main: React.FC<RecordListProps> = (props) => {
 
 const FormRecordList = () => {
     const { form_list_url } = useParams();
-    const [tableName, setTableName] = useState<string>("");
+    const [routeProps, setRouteProps] = useState<RouteProps>();
 
     useEffect(() => {
         const similarForm = routesData["form-list"].find(
             (form) => form.url === form_list_url
         );
         if (similarForm) {
-            console.log(similarForm.table);
-            setTableName(similarForm.table);
+            console.log(similarForm);
+            setRouteProps({
+                name: similarForm.name,
+                url: similarForm.url,
+                table: similarForm.table,
+                file: similarForm.file
+            });
         }
-    });
+    }, []);
 
     return (
         <Routes>
-            {tableName && (
+            {routeProps && (
                 <>
-                    <Route path="/" element={<Main tableName={tableName} />} />
-                    <Route path="/create-new" element={<NewRecord />} />
-                    <Route path="/r/:record_id" element={<ModifyRecord />} />
+                    <Route path="/" element={<Main tableName={routeProps.table} />} />
+                    <Route path="/create-new" element={<NewRecord fileName={routeProps.file} />} />
+                    <Route path="/r/:record_id" element={<ModifyRecord fileName={routeProps.file} />} />
                 </>
             )}
         </Routes>

@@ -172,7 +172,7 @@ const App = () => {
 
           <Container fluid className="p-4">
             <Row className="justify-content-center">
-              <Col xs="12" md="8">
+              <Col>
                 <Routes>
                   <Route path="/" element={<Home />}/>
                   <Route path="/acc/:profile_id/*" element={<Profile />} />
