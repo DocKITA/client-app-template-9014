@@ -76,7 +76,6 @@ const App = () => {
     useAuth0();
   const [routes, setRoutes] = useState<RouteConfig[]>([]);
   const formRoutes = routesData['form-list'];
-  const navigate = useNavigate();
 
   const load_routes = () => {
     const route_list: RouteConfig[] = [];
@@ -113,11 +112,12 @@ const App = () => {
     }
   }, [isAuthenticated, isLoading, loginWithRedirect]);
 
-  useEffect(() => {
-    formRoutes.forEach((form) => {
-      navigate(`./f/${form.url}`, { state: { tableName: form.table } });
-    });
-  }, [formRoutes, navigate]);
+  // useEffect(() => {
+  //   formRoutes.forEach((form) => {
+  //     navigate(`./f/${form.url}`, { state: { tableName: form.table } });
+  //   });
+  // }, [formRoutes, navigate]);
+  
 
   return (
     <Router>
@@ -181,7 +181,7 @@ const App = () => {
             <Row className="justify-content-center">
               <Col xs="12" md="8">
                 <Routes>
-                  <Route path="/" element={<Home />}/>
+                  <Route path="/*" element={<Home />}/>
                   <Route path="/acc/:profile_id/*" element={<Profile />} />
                   {/* 
                   Need to write a useEffect to load the route content
