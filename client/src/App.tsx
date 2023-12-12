@@ -112,13 +112,6 @@ const App = () => {
     }
   }, [isAuthenticated, isLoading, loginWithRedirect]);
 
-  // useEffect(() => {
-  //   formRoutes.forEach((form) => {
-  //     navigate(`./f/${form.url}`, { state: { tableName: form.table } });
-  //   });
-  // }, [formRoutes, navigate]);
-  
-
   return (
     <Router>
       <div className="d-flex min-vh-100">
@@ -179,7 +172,7 @@ const App = () => {
 
           <Container fluid className="p-4">
             <Row className="justify-content-center">
-              <Col xs="12" md="8">
+              <Col>
                 <Routes>
                   <Route path="/*" element={<Home />}/>
                   <Route path="/acc/:profile_id/*" element={<Profile />} />
@@ -188,7 +181,7 @@ const App = () => {
                     Create a loop for route list
                           <Route path `/f/${form.url}` element = FormRecordList tableName = form.tableName />
                   */}
-                  <Route path="/f/:form_list_url/*" element={<FormRecordList tableName="" />} />
+                  <Route path="/f/:form_list_url/*" element={<FormRecordList />} />
                 </Routes>
               </Col>
             </Row>

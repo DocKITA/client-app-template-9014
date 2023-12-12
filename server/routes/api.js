@@ -8,6 +8,7 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
 router.use("/auth", require("./auth/auth"));
+router.use("/form", require("./form/form"));
 
 // For connection testing purpose, PLEASE DO NOT REMOVE
 router.get('/', async (req, res) => {
