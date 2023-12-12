@@ -24,10 +24,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 interface FormProps {
     fileName: string;
+    tableName: string;
 }
 
 const ModifyRecord: React.FC<FormProps> = (props) => {
-    const { fileName } = props;
+    const { fileName, tableName } = props;
 
     useEffect(() => {
         console.log(`File Name: `, fileName);

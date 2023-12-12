@@ -129,8 +129,8 @@ const FormRecordList = () => {
             {routeProps && (
                 <>
                     <Route path="/" element={<Main tableName={routeProps.table} />} />
-                    <Route path="/create-new" element={<NewRecord fileName={routeProps.file} />} />
-                    <Route path="/r/:record_id" element={<ModifyRecord fileName={routeProps.file} />} />
+                    <Route path="/create-new" element={<NewRecord fileName={routeProps.file} tableName={routeProps.table} />} />
+                    <Route path="/r/:record_id" element={<ModifyRecord fileName={routeProps.file} tableName={routeProps.table} />} />
                 </>
             )}
         </Routes>

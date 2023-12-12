@@ -4,6 +4,7 @@ import {
     Route,
     Routes,
     useNavigate,
+    useParams,
 } from "react-router-dom";
 import {
     Breadcrumb,
@@ -18,14 +19,17 @@ import {
     Button,
     Offcanvas,
     Spinner,
+    Alert,
 } from "react-bootstrap";
 import { useAuth0 } from "@auth0/auth0-react";
 import { fabric } from "fabric";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
+import { ref } from 'firebase/storage';
 
 interface FormProps {
     fileName: string;
+    tableName: string;
 }
 
 interface CanvasPage {
@@ -43,9 +47,10 @@ interface Page {
 }
 
 const NewRecord: React.FC<FormProps> = (props) => {
-    const { fileName } = props;
+    const { fileName, tableName } = props;
     const { user } = useAuth0();
     const navigate = useNavigate();
+    const { form_list_url } = useParams<{ form_list_url: string }>();
 
     const [fabricCanvas, setFabricCanvas] = useState();
     const [canvasJSON, setCanvasJSON] = useState(null);
@@ -54,6 +59,8 @@ const NewRecord: React.FC<FormProps> = (props) => {
     const [currentPage, setCurrentPage] = useState<number>(0);
     const [isPanningMode, setIsPanningMode] = useState<boolean>(false);
     const [canvasChanged, setCanvasChanged] = useState<boolean>(false);
+
+    const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
 
     const canvasRef = useRef(null);
     const containerRef = useRef(null);
@@ -165,6 +172,63 @@ const NewRecord: React.FC<FormProps> = (props) => {
         }
     };
 
+    const handleSave = async () => {
+        const currentPageData = fabricCanvas.toJSON();
+        const updatedPages = [...pages];
+        updatedPages[currentPage] = {
+            id: currentPage,
+            canvasJSON: currentPageData
+        };
+
+        setPages(updatedPages);
+        const jsonData = [];
+
+        const extractProperties = (canvasJSON) => {
+            const extractedData = [];
+            canvasJSON.objects.forEach((obj) => {
+                if (obj.fx && obj.id && obj.text) {
+                    const extractedObj = {
+                        fx: obj.fx || null,
+                        id: obj.id || null,
+                        text: obj.text || null,
+                        type: obj.type || null
+                    };
+                    extractedData.push(extractedObj);
+                }
+            });
+
+            return extractedData;
+        };
+        
+        updatedPages.forEach((page) => {
+            const extractedData = extractProperties(page.canvasJSON);
+            jsonData.push(extractedData);
+        })
+
+        const flattenedData = jsonData.flat()
+
+        // Implement a function to extract JSON Objects .fx .id .text .type
+
+        try {
+            const res = await fetch(`/api/form/insert-record`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    table: tableName,
+                    data: flattenedData
+                })
+            });
+    
+            if (res.ok) {
+                setSavedSuccess(true);
+            }
+        } catch (error) {
+            console.error(`Error while insert record: ${error}`);
+        }
+    };
+
     useEffect(() => {
         const extractJSONFile = async () => {
             try {
@@ -180,11 +244,27 @@ const NewRecord: React.FC<FormProps> = (props) => {
                 if (data && data.length > 0) {
 
                     const newPages = [];
+
+                    // Load all JSON object into canvas
                     for (let i = 0; i < data.length; i++) {
+                        console.log(`Data: `, data[i]);
                         const pageData = {
                             "id": i,
                             "canvasJSON": data[i]
                         };
+
+                        pageData.canvasJSON.objects.forEach((obj) => {
+                            if (obj.fx && obj.fx === "input") {
+                                obj.lockMovementX = true;
+                                obj.lockMovementY = true;
+                                obj.lockScalingX = true;
+                                obj.lockScalingY = true;
+                                obj.lockRotation = true;
+                                obj.lockUniScaling = true;
+                                obj.lockFlip = true;
+                                obj.hasControls = false;
+                            }
+                        })
                         newPages.push(pageData);
                     }
                     
@@ -193,6 +273,27 @@ const NewRecord: React.FC<FormProps> = (props) => {
                         width: newPages[0].canvasJSON.objects[0].width,
                         height: newPages[0].canvasJSON.objects[0].height
                     });
+
+                    newPages[0].canvasJSON.objects.forEach((obj) => {
+                        if (obj.fx === "input") {
+                            obj.lockMovementX = true;
+                            obj.lockMovementY = true;
+                            obj.lockScalingX = true;
+                            obj.lockScalingY = true;
+                            obj.lockRotation = true;
+                            obj.lockUniScaling = true;
+                            obj.lockFlip = true;
+                            obj.hasControls = false;
+
+                            canvas.on("mouse:down", (event) => {
+                                const target = event.target;
+                                if (target && target.fx === "input") {
+                                    canvas.discardActiveObject();
+                                    target.enterEditing();
+                                }
+                            })
+                        }
+                    })
 
                     setFabricCanvas(canvas);
     
@@ -207,10 +308,10 @@ const NewRecord: React.FC<FormProps> = (props) => {
         extractJSONFile();
     }, [fileName]);
     
-    useEffect(() => {
-        // Display the updated pages array
-        console.log(`Pages ${currentPage}: `, pages[currentPage]);
-    }, [pages]);
+    // useEffect(() => {
+    //     // Display the updated pages array
+    //     console.log(`Pages ${currentPage}: `, pages[currentPage]);
+    // }, [pages]);
 
     useEffect(() => {
         isPanningModeRef.current = isPanningMode;
@@ -251,16 +352,20 @@ const NewRecord: React.FC<FormProps> = (props) => {
             <Col>
                 <Row>
                     <Col>
-                        <Button
-                            variant="outline-light"
-                            style={{
-                                backgroundColor:
-                                    process.env
-                                        .REACT_APP_APPLICATION_THEME_COLOR,
-                            }}
-                        >
-                            Cancel
-                        </Button>
+                        <Link to={`/f/${form_list_url}`}>
+                            <Button
+                                variant="outline-light"
+                                style={{
+                                    backgroundColor:
+                                        process.env
+                                            .REACT_APP_APPLICATION_THEME_COLOR,
+                                }}
+                            >
+                                {
+                                    savedSuccess ? 'Return' : 'Cancel'
+                                }
+                            </Button>
+                        </Link>
                     </Col>
                     <Col className="text-center">
                         <Button
@@ -289,6 +394,7 @@ const NewRecord: React.FC<FormProps> = (props) => {
                     </Col>
                     <Col>
                         <Button
+                            onClick={handleSave}
                             variant="outline-light"
                             className="float-end"
                             style={{
@@ -296,16 +402,32 @@ const NewRecord: React.FC<FormProps> = (props) => {
                                     process.env
                                         .REACT_APP_APPLICATION_THEME_COLOR,
                             }}
+                            disabled={savedSuccess}
                         >
                             Save
                         </Button>
                     </Col>
                 </Row>
-                <Row style={{ height: "75vh"}}>
-                    <Col className="overflow-auto w-100">
-                        <canvas className="" id="canvasRef" ref={canvasRef} />
+                <Row className="mx-auto " style={{ width: "95vw", height: "75vh"}}>
+                    <Col className="overflow-auto h-100 w-100">
+                        <canvas className="" id="canvasRef" ref={canvasRef} style={{ cursor: "default" }} />
                     </Col>
                 </Row>
+
+                {
+                    savedSuccess && (
+                        <Alert 
+                            variant="success" 
+                            className="position-absolute bottom-0 end-0 m-3" 
+                            onClose={() => {
+                                navigate(`/f/${form_list_url}`);
+                            }} 
+                            dismissible
+                        >
+                            New Record Saved <Alert.Link href={`/f/${form_list_url}`}>Back to Record List</Alert.Link>
+                        </Alert>
+                    )
+                }
             </Col>
         </Row>
     )
