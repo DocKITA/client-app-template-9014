@@ -24,6 +24,19 @@ router.get("/get-record-list/:tableName", async (req, res) => {
     }
 });
 
+router.post("/get-record", async (req, res) => {
+    const { table, record_id } = req.body;
+    try {
+        const selectQuery = `SELECT * FROM ${table} WHERE id = '${record_id}'`;
+        const selectResult = await pool.query(selectQuery);
+        console.log("Load Record");
+        return res.json({ record: selectResult.rows[0] });
+    } catch (e) {
+        console.error(`Error: `, e.message);
+        res.status(500).json("Server Error");
+    }
+});
+
 router.post("/insert-record", async (req, res) => {
     const { table, data } = req.body;
     try {
@@ -59,6 +72,17 @@ router.post("/insert-record", async (req, res) => {
     } catch (e) {
         console.error(`Error: `, e.message);
         return res.status(500).json("Server Error");
+    }
+});
+
+// For connection testing purpose, PLEASE DO NOT REMOVE
+router.get('/', async (req, res) => {
+    try {
+        console.log("FORM");
+        res.json("FORM");
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
     }
 });
 
