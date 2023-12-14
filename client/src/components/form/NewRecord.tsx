@@ -247,7 +247,7 @@ const NewRecord: React.FC<FormProps> = (props) => {
 
                     // Load all JSON object into canvas
                     for (let i = 0; i < data.length; i++) {
-                        console.log(`Data: `, data[i]);
+                        // console.log(`Data: `, data[i]);
                         const pageData = {
                             "id": i,
                             "canvasJSON": data[i]
@@ -271,7 +271,8 @@ const NewRecord: React.FC<FormProps> = (props) => {
                     // Initiate a new Canvas
                     const canvas = new fabric.Canvas(canvasRef.current, {
                         width: newPages[0].canvasJSON.objects[0].width,
-                        height: newPages[0].canvasJSON.objects[0].height
+                        height: newPages[0].canvasJSON.objects[0].height,
+                        selection: false
                     });
 
                     newPages[0].canvasJSON.objects.forEach((obj) => {
@@ -292,13 +293,17 @@ const NewRecord: React.FC<FormProps> = (props) => {
                                     target.enterEditing();
                                 }
                             })
+                            canvas.renderAll();
                         }
-                    })
+                    });
+
 
                     setFabricCanvas(canvas);
     
                     // Update the state with the combined array of previous pages and new pages
                     setPages((prevPages) => [...prevPages, ...newPages]);
+
+                    saveAndLoadPage(0);
                 }
             } catch (error) {
                 console.error("Error loading JSON file:", error);
@@ -307,11 +312,6 @@ const NewRecord: React.FC<FormProps> = (props) => {
     
         extractJSONFile();
     }, [fileName]);
-    
-    // useEffect(() => {
-    //     // Display the updated pages array
-    //     console.log(`Pages ${currentPage}: `, pages[currentPage]);
-    // }, [pages]);
 
     useEffect(() => {
         isPanningModeRef.current = isPanningMode;
