@@ -71,6 +71,30 @@
             "url": "newkun",
             "table": "newkun",
             "file": "5e6d63ca-f033-4364-8930-14f6f3474fa2"
+        },
+        {
+            "name": "opop",
+            "url": "opop",
+            "table": "opop",
+            "file": "7a2d9f20-333a-40af-ab12-84bdf872fc76"
+        },
+        {
+            "name": "hbhb",
+            "url": "hbhb",
+            "table": "hbhb",
+            "file": "9786a75c-1017-4dd9-867a-59d523ecc627"
+        },
+        {
+            "name": "lmlm",
+            "url": "lmlm",
+            "table": "lmlm",
+            "file": "823586a9-95da-48ca-8287-6467b0d61100"
+        },
+        {
+            "name": "gfgf",
+            "url": "gfgf",
+            "table": "gfgf",
+            "file": "375d08d5-5742-4109-8a60-f07fb8f7ef0b"
         }
     ]
 }
