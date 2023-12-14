@@ -25,7 +25,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { fabric } from "fabric";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
-import { ref } from 'firebase/storage';
 
 interface FormProps {
     fileName: string;
@@ -53,21 +52,13 @@ const NewRecord: React.FC<FormProps> = (props) => {
     const { form_list_url } = useParams<{ form_list_url: string }>();
 
     const [fabricCanvas, setFabricCanvas] = useState();
-    const [canvasJSON, setCanvasJSON] = useState(null);
-    const [selectedElementID, setSelectedElementID] = useState();
     const [pages, setPages] = useState<Page[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(0);
-    const [isPanningMode, setIsPanningMode] = useState<boolean>(false);
     const [canvasChanged, setCanvasChanged] = useState<boolean>(false);
 
     const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
 
     const canvasRef = useRef(null);
-    const containerRef = useRef(null);
-    const isPanningModeRef = useRef(isPanningMode);
-    const zoomInRef = useRef(null);
-    const zoomOutRef = useRef(null);
-    const panRef = useRef(null);
     
     fabric.Textbox.prototype.toObject = (function(toObject) {
         return function() {
@@ -119,6 +110,7 @@ const NewRecord: React.FC<FormProps> = (props) => {
         const newPageData = updatedPages[newPageIndex].canvasJSON;
         fabricCanvas.loadFromJSON(newPageData, () => {
             const background = fabricCanvas.getObjects().find((obj) => obj.type === "image");
+            const canvasObjects = fabricCanvas.getObjects();
             if (background) {
                 background.set({
                     lockMovementX: true,
@@ -129,6 +121,21 @@ const NewRecord: React.FC<FormProps> = (props) => {
                     selectable: false,
                     evented: false,
                 });
+            }
+
+            for (const obj of canvasObjects) {
+                if (obj.fx === "input") {
+                    obj.lockMovementX = true;
+                    obj.lockMovementY = true;
+                    obj.lockScalingX = true;
+                    obj.lockScalingY = true;
+                    obj.lockRotation = true;
+                    obj.lockUniScaling = true;
+                    obj.lockFlip = true;
+                    obj.hasControls = false;
+                    obj.selectable = false;
+                    obj.evented = true;
+                }
             }
 
             fabricCanvas.renderAll();
@@ -312,10 +319,6 @@ const NewRecord: React.FC<FormProps> = (props) => {
     
         extractJSONFile();
     }, [fileName]);
-
-    useEffect(() => {
-        isPanningModeRef.current = isPanningMode;
-    }, [isPanningMode]);
 
     useEffect(() => {
         const handleCanvasChanges = () => {
