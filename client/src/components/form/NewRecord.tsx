@@ -59,6 +59,13 @@ const NewRecord: React.FC<FormProps> = (props) => {
     const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
 
     const canvasRef = useRef(null);
+    const containerRef = useRef(null);
+    const isPanningModeRef = useRef(isPanningMode);
+    const zoomInRef = useRef(null);
+    const zoomOutRef = useRef(null);
+    const panRef = useRef(null);
+
+    const [firstCanvasJSON, setFirstCanvasJSON] = useState<JSON>();
     
     fabric.Textbox.prototype.toObject = (function(toObject) {
         return function() {
@@ -101,13 +108,17 @@ const NewRecord: React.FC<FormProps> = (props) => {
         const updatedPages = [...pages];
         updatedPages[currentPage] = {
             id: currentPage,
-            canvasJSON: currentPageData
+            canvasJSON: firstCanvasJSON
         };
+
+        console.log("FirstJSON", firstCanvasJSON)
 
         setPages(updatedPages);
         setCurrentPage(newPageIndex);
+        console.log("Index",newPageIndex)
         fabricCanvas.clear();
         const newPageData = updatedPages[newPageIndex].canvasJSON;
+        console.log("JSON", newPageData)
         fabricCanvas.loadFromJSON(newPageData, () => {
             const background = fabricCanvas.getObjects().find((obj) => obj.type === "image");
             const canvasObjects = fabricCanvas.getObjects();
@@ -282,6 +293,24 @@ const NewRecord: React.FC<FormProps> = (props) => {
                         selection: false
                     });
 
+                    canvas.loadFromJSON(newPages[0].canvasJSON, () => {
+                        // Callback function to execute after JSON is loaded
+                        const background = canvas.getObjects().find((obj) => obj.type === "image");
+                        if (background) {
+                            background.set({
+                                lockMovementX: true,
+                                lockMovementY: true,
+                                lockScalingX: true,
+                                lockScalingY: true,
+                                lockRotation: true,
+                                selectable: false,
+                                evented: false,
+                            });
+                        }
+                    
+                        canvas.renderAll();
+                    });
+
                     newPages[0].canvasJSON.objects.forEach((obj) => {
                         if (obj.fx === "input") {
                             obj.lockMovementX = true;
@@ -306,9 +335,15 @@ const NewRecord: React.FC<FormProps> = (props) => {
 
 
                     setFabricCanvas(canvas);
+                    
+
     
                     // Update the state with the combined array of previous pages and new pages
                     setPages((prevPages) => [...prevPages, ...newPages]);
+
+
+                    console.log("First Page Data:", newPages[0].canvasJSON);
+                    setFirstCanvasJSON(newPages[0].canvasJSON);
 
                     saveAndLoadPage(0);
                 }
