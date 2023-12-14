@@ -47,6 +47,7 @@ interface Page {
 
 const ModifyRecord: React.FC<FormProps> = (props) => {
     const { fileName, tableName } = props;
+    const { record_id } = useParams();
     const { user } = useAuth0();
     const navigate = useNavigate();
     const { form_list_url } = useParams<{ form_list_url: string }>();
