@@ -200,23 +200,26 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
     // Implement a function to extract JSON Objects .fx .id .text .type
 
     try {
-      const res = await fetch(`/api/form/insert-record`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          table: tableName,
-          data: flattenedData,
-        }),
-      });
-
-      if (res.ok) {
-        setSavedSuccess(true);
-      }
+        const res = await fetch(`/api/form/update-record`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                table: tableName,
+                data: flattenedData,
+                id: record_id
+            }),
+        });
+    
+        if (res.ok) {
+            setSavedSuccess(true);
+        } else {
+            console.error(`Error while updating record: ${res.status}`);
+        }
     } catch (error) {
-      console.error(`Error while insert record: ${error}`);
-    }
+        console.error(`Error while updating record: ${error}`);
+    }    
   };
 
   const extractJSONFile = async () => {
@@ -453,7 +456,7 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
             }}
             dismissible
           >
-            New Record Saved{" "}
+            Changes Saved{" "}
             <Alert.Link href={`/f/${form_list_url}`}>
               Back to Record List
             </Alert.Link>
