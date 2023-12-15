@@ -14,6 +14,7 @@ import {
   Offcanvas,
   Spinner,
   Alert,
+  Modal,
 } from "react-bootstrap";
 import { useAuth0 } from "@auth0/auth0-react";
 import { fabric } from "fabric";
@@ -54,6 +55,8 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
   const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
   const [record, setRecord] = useState<any>(null);
   const [extractStatus, setExtractStatus] = useState<boolean>(false);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const canvasRef = useRef(null);
 
@@ -200,7 +203,7 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
     // Implement a function to extract JSON Objects .fx .id .text .type
 
     try {
-      const res = await fetch(`/api/form/insert-record`, {
+      const res = await fetch(`/api/form/update-record`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -208,14 +211,17 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
         body: JSON.stringify({
           table: tableName,
           data: flattenedData,
+          id: record_id,
         }),
       });
 
       if (res.ok) {
         setSavedSuccess(true);
+      } else {
+        console.error(`Error while updating record: ${res.status}`);
       }
     } catch (error) {
-      console.error(`Error while insert record: ${error}`);
+      console.error(`Error while updating record: ${error}`);
     }
   };
 
@@ -317,6 +323,33 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
     extractJSONFile();
     setExtractStatus(false);
   }
+
+  const handleDelete = async () => {
+    try {
+      const res = await fetch(`/api/form/delete-record`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: record_id,
+          table: tableName,
+        }),
+      });
+
+      if (res.ok) {
+        window.alert("Delete Successfully");
+        setShowDeleteModal(false);
+        navigate(`/f/${form_list_url}`);
+      } else {
+        window.alert("Delete Failed");
+        console.error(`Error while deleting record: ${res.status}`);
+      }
+    } catch (error) {
+      window.alert("Delete Failed");
+      console.error(`Error while deleting record: ${error}`);
+    }
+  };
 
   useEffect(() => {
     const fetchRecord = async () => {
@@ -421,6 +454,16 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
           </Col>
           <Col>
             <Button
+              onClick={() => setShowDeleteModal(true)}
+              variant="outline-light"
+              className="float-end"
+              style={{
+                backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
+              }}
+            >
+              Delete
+            </Button>
+            <Button
               onClick={handleSave}
               variant="outline-light"
               className="float-end"
@@ -432,6 +475,29 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
               Save
             </Button>
           </Col>
+
+          <Modal
+            show={showDeleteModal}
+            onHide={() => setShowDeleteModal(false)}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Confirm Deletion</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Are you sure you want to delete this record?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button variant="danger" onClick={handleDelete}>
+                Delete
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </Row>
         <Row className="mx-auto " style={{ width: "95vw", height: "75vh" }}>
           <Col className="overflow-auto h-100 w-100">
@@ -453,7 +519,7 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
             }}
             dismissible
           >
-            New Record Saved{" "}
+            Changes Saved{" "}
             <Alert.Link href={`/f/${form_list_url}`}>
               Back to Record List
             </Alert.Link>

@@ -45,6 +45,19 @@ const Main: React.FC<RecordListProps> = (props) => {
         loadTableData();
     }, []);
 
+    
+    const formatDate = (dateString) => {
+        const options = {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        };
+      
+        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
+        return formattedDate;
+      };
     return (
         <Row>
             <Col>
@@ -79,7 +92,7 @@ const Main: React.FC<RecordListProps> = (props) => {
                             recordList && recordList.map(record => (
                                 <tr key={record.id}>
                                     <td>{record.id}</td>
-                                    <td>{record.date_created}</td>
+                                    <td>{formatDate(record.date_created)}</td>
                                     <td>
                                         <Link to={`./r/${record.id}`}>
                                             <Button

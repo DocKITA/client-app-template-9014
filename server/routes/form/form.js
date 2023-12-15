@@ -75,6 +75,45 @@ router.post("/insert-record", async (req, res) => {
     }
 });
 
+router.post("/update-record", async (req, res) => {
+    const { table, data, id } = req.body;
+
+    try {
+        // Constructing SQL update query
+        const updateColumns = data.map(obj => `${obj.id} = '${obj.text}'`).join(', ');
+        const query = `UPDATE ${table} SET ${updateColumns} WHERE id = '${id}'`;
+
+        const result = await pool.query(query);
+
+        if (result.rowCount === 1) {
+            return res.status(200).json("Success");
+        } else {
+            return res.status(404).json("Record not found");
+        }
+    } catch (e) {
+        console.error(`Error: `, e.message);
+        return res.status(500).json("Server Error");
+    }
+});
+
+router.delete('/delete-record', async (req, res) => {
+    const { id, table } = req.body;
+  
+    try {
+      const result = await pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
+  
+      if (result.rowCount === 1) {
+        return res.status(200).json("Record deleted successfully");
+      } else {
+        return res.status(404).json("Record not found");
+      }
+    } catch (error) {
+      console.error(`Error while deleting record: `, error);
+      return res.status(500).json("Server Error");
+    }
+  });
+
+
 // For connection testing purpose, PLEASE DO NOT REMOVE
 router.get('/', async (req, res) => {
     try {
