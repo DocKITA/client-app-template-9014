@@ -33,7 +33,7 @@ const Main = () => {
 		};
 
 		checkRoutesFile();
-	})
+	}, []);
 
     return (
         <div>
@@ -41,8 +41,7 @@ const Main = () => {
                 <thead
                     style={{
                         textAlign: "center",
-                        backgroundColor:
-                            process.env.REACT_APP_APPLICATION_THEME_COLOR,
+                        backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
                     }}
                 >
                     <tr>
@@ -62,14 +61,8 @@ const Main = () => {
                                 <td style={{ textAlign: "center" }}>
                                     <Button
                                         variant="outline-light"
-                                        style={{
-                                            backgroundColor:
-                                                process.env
-                                                    .REACT_APP_APPLICATION_THEME_COLOR,
-                                        }}
-                                        onClick={() =>
-                                            handleViewClick(form.url)
-                                        }
+                                        style={{backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR}}
+                                        onClick={() => handleViewClick(form.url)}
                                     >
                                         View
                                     </Button>
