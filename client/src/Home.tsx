@@ -14,7 +14,7 @@ interface UserProps {
 
 const Main = () => {
     const { isAuthenticated, user } = useAuth0;
-	const { routesData, setRoutesData } = useState();
+	const [routesData, setRoutesData] = useState();
     const navigate = useNavigate();
 
     const handleViewClick = (url: string) => {
