@@ -821,23 +821,17 @@ const Main = () => {
                                                                         Female
                                                                     </option>
                                                                     <option value="Prefer Not To Say">
-                                                                        Prefer
-                                                                        not to
-                                                                        say
+                                                                        Prefer not to say
                                                                     </option>
                                                                 </Form.Control>
                                                             ) : (
                                                                 <span className="mt-2">
-                                                                    {
-                                                                        formData.gender
-                                                                    }
+                                                                    {formData.gender}
                                                                 </span>
                                                             )}
                                                             {genderError && (
                                                                 <p className="text-danger">
-                                                                    {
-                                                                        genderError
-                                                                    }
+                                                                    {genderError}
                                                                 </p>
                                                             )}
                                                         </Col>
@@ -845,27 +839,19 @@ const Main = () => {
                                                 </Form.Group>
                                                 <Form.Group>
                                                     <Row className="mt-3">
-                                                        <Col
-                                                            xs={2}
-                                                            className="text-right"
-                                                        ></Col>
+                                                        <Col xs={2} className="text-right"></Col>
                                                         <Col xs={10}>
                                                             {isCurrentUserProfile && (
                                                                 <Button
                                                                     className="custom-button"
                                                                     variant="outline-light"
                                                                     style={{
-                                                                        backgroundColor:
-                                                                        process.env.REACT_APP_APPLICATION_THEME_COLOR,
+                                                                        backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
                                                                         color: "white",
                                                                         width: "100%",
                                                                     }}
-                                                                    onClick={
-                                                                        handleSaveProfile
-                                                                    }
-                                                                    disabled={
-                                                                        !unsavedChanges
-                                                                    }
+                                                                    onClick={handleSaveProfile}
+                                                                    disabled={!unsavedChanges}
                                                                 >
                                                                     Save
                                                                 </Button>
@@ -886,48 +872,28 @@ const Main = () => {
                                 </Alert.Heading>
                                 <Row>
                                     <Col md={10}>
-                                        You will DocKITA account will be
-                                        removed, and it will no longer have
-                                        access to your applications
+                                        You will DocKITA account will be removed, and it will no longer have access to your applications
                                     </Col>
                                     <Col>
-                                        <Button
-                                            variant="danger"
-                                            onClick={() =>
-                                                setShowDeleteAccountModal(true)
-                                            }
-                                        >
+                                        <Button variant="danger" onClick={() => setShowDeleteAccountModal(true)}>
                                             Delete
                                         </Button>
                                     </Col>
                                 </Row>
                             </Alert>
                         )}
-                        <Modal
-                            show={showDeleteAccountModal}
-                            onHide={() => setShowDeleteAccountModal(false)}
-                            centered
-                        >
+                        <Modal show={showDeleteAccountModal} onHide={() => setShowDeleteAccountModal(false)} centered>
                             <Modal.Header closeButton>
                                 Delete Account
                             </Modal.Header>
                             <Modal.Body>
-                                Are you really sure you want to delete "
-                                {formData.nickname}"? This cannot be undone!
+                                Are you really sure you want to delete " {formData.nickname}"? This cannot be undone!
                             </Modal.Body>
                             <Modal.Footer>
-                                <Button
-                                    variant="secondary"
-                                    onClick={() =>
-                                        setShowDeleteAccountModal(false)
-                                    }
-                                >
+                                <Button variant="secondary" onClick={() => setShowDeleteAccountModal(false)}>
                                     Cancel
                                 </Button>
-                                <Button
-                                    variant="danger"
-                                    onClick={handleDeleteAccount}
-                                >
+                                <Button variant="danger" onClick={handleDeleteAccount}>
                                     Yes, Delete It
                                 </Button>
                             </Modal.Footer>
@@ -935,19 +901,12 @@ const Main = () => {
                     </Col>
                 </Row>
             )}
-            <Modal
-                show={showSuccessModal}
-                onHide={() => window.location.reload()}
-                centered
-            >
+            <Modal show={showSuccessModal} onHide={() => window.location.reload()} centered>
                 <Modal.Body>
                     Your profile has been updated successfully.
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button
-                        variant="primary"
-                        onClick={() => window.location.reload()}
-                    >
+                    <Button variant="primary" onClick={() => window.location.reload()}>
                         Close
                     </Button>
                 </Modal.Footer>
