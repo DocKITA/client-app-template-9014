@@ -173,5 +173,49 @@ router.get("/export-record/:tableName/:recordId", async (req, res) => {
     }
   });
   
+  router.get("/export-page-record/:tableName", async (req, res) => {
+    const { tableName } = req.params;
+  
+    try {
+      const selectQuery = `SELECT * FROM ${tableName}`;
+      const selectResult = await pool.query(selectQuery);
+  
+      if (selectResult.rows.length === 0) {
+        return res.status(404).json("No records found");
+      }
+  
+      // Create a new workbook and worksheet
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Record");
+  
+      // Add headers to the worksheet (excluding id and date_created)
+      const columns = Object.keys(selectResult.rows[0]).filter(
+        (col) => col !== "id" && col !== "date_created"
+      );
+      worksheet.addRow(columns);
+  
+      // Add each record to the worksheet (excluding id and date_created)
+      for (const row of selectResult.rows) {
+        const rowData = columns.map((col) => row[col]);
+        worksheet.addRow(rowData);
+      }
+  
+      // Set content type and send the file
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader("Content-Disposition", `attachment; filename=${tableName}.xlsx`);
+  
+      // Write to response stream
+      await workbook.xlsx.write(res);
+  
+      // End the response
+      res.end();
+    } catch (error) {
+      console.error(`Error while exporting records: `, error);
+      res.status(500).json("Server Error");
+    }
+  });
 
 module.exports = router;

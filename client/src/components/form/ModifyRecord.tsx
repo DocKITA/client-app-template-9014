@@ -549,10 +549,10 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
             onHide={() => setShowExportModal(false)}
           >
             <Modal.Header closeButton>
-              <Modal.Title>Export</Modal.Title>
+              <Modal.Title>Export as excel file</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              Export as excel file?
+              Export {record_id}?
             </Modal.Body>
             <Modal.Footer>
               <Button

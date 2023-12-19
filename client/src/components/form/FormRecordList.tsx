@@ -3,7 +3,7 @@ import { Link, Route, Routes, useParams, useNavigate } from "react-router-dom";
 import NewRecord from "./NewRecord";
 import ModifyRecord from "./ModifyRecord";
 import routesData from "./../../../routes.json";
-import { Row, Col, Table, Button } from "react-bootstrap";
+import { Row, Col, Table, Button, Modal } from "react-bootstrap";
 
 interface RouteProps {
   name: string;
@@ -22,6 +22,7 @@ const Main: React.FC<RecordListProps> = (props) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 10;
   const navigate = useNavigate();
+  const [showExportModal, setShowExportModal] = useState(false);
 
   const loadTableData = async () => {
     try {
@@ -71,10 +72,56 @@ const Main: React.FC<RecordListProps> = (props) => {
     return formattedDate;
   };
 
+  const handleExport = async () => {
+    try {
+      const res = await fetch(
+        `/api/form/export-page-record/${tableName}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (res.ok) {
+        // Handle success, you might want to download the exported file
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+
+        // Dynamically set the filename based on record_id
+        a.download = `${tableName}.xlsx`;
+
+        a.href = url;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setShowExportModal(false);
+      } else {
+        console.error(`Error while exporting record: ${res.status}`);
+        setShowExportModal(false);
+      }
+    } catch (error) {
+      console.error(`Error while exporting record: ${error}`);
+      setShowExportModal(false);
+    }
+  };
+
   return (
     <>
       <Row className="justify-content-end">
         <Col xs="auto">
+          <Button
+            onClick={() => setShowExportModal(true)}
+            variant="outline-light"
+            className="float-end"
+            style={{
+              backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
+            }}
+          >
+            Export
+          </Button>
           <Link to={`./create-new`}>
             <Button
               variant="outline-light"
@@ -131,6 +178,24 @@ const Main: React.FC<RecordListProps> = (props) => {
             </tbody>
           </Table>
         </Col>
+
+        <Modal show={showExportModal} onHide={() => setShowExportModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Export as excel file</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Export {tableName}?</Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setShowExportModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleExport}>
+              Confirm
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Row>
     </>
   );
