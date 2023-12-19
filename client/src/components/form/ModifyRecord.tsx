@@ -57,6 +57,7 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
   const [extractStatus, setExtractStatus] = useState<boolean>(false);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   const canvasRef = useRef(null);
 
@@ -164,6 +165,40 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
       };
     }
   };
+
+  const handleExport = async () => {
+    try {
+      const res = await fetch(`/api/form/export-record/${tableName}/${record_id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (res.ok) {
+        // Handle success, you might want to download the exported file
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+  
+        // Dynamically set the filename based on record_id
+        a.download = `${record_id}.xlsx`;
+  
+        a.href = url;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setShowExportModal(false);
+      } else {
+        console.error(`Error while exporting record: ${res.status}`);
+        setShowExportModal(false);
+      }
+    } catch (error) {
+      console.error(`Error while exporting record: ${error}`);
+      setShowExportModal(false);
+    }
+  };
+  
 
   const handleSave = async () => {
     const currentPageData = fabricCanvas.toJSON();
@@ -453,6 +488,16 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
             </Button>
           </Col>
           <Col>
+          <Button
+              onClick={() => setShowExportModal(true)}
+              variant="outline-light"
+              className="float-end"
+              style={{
+                backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,
+              }}
+            >
+              Export
+            </Button>
             <Button
               onClick={() => setShowDeleteModal(true)}
               variant="outline-light"
@@ -495,6 +540,29 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
               </Button>
               <Button variant="danger" onClick={handleDelete}>
                 Delete
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          <Modal
+            show={showExportModal}
+            onHide={() => setShowExportModal(false)}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Export</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Export as excel file?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setShowExportModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={handleExport}>
+                Confirm
               </Button>
             </Modal.Footer>
           </Modal>

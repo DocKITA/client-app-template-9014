@@ -5,6 +5,8 @@ const dotenv = require("dotenv").config();
 const crypto = require("crypto");
 const request = require("request");
 const pool = require("./../../db");
+const ExcelJS = require("exceljs");
+
 
 // Allow router to use these library
 router.use(cors());
@@ -124,5 +126,52 @@ router.get('/', async (req, res) => {
         res.status(500).json("Server Error");
     }
 });
+
+router.get("/export-record/:tableName/:recordId", async (req, res) => {
+    const { tableName, recordId } = req.params;
+  
+    try {
+      const selectQuery = `SELECT * FROM ${tableName} WHERE id = $1`;
+      const selectResult = await pool.query(selectQuery, [recordId]);
+  
+      if (selectResult.rows.length === 0) {
+        return res.status(404).json("Record not found");
+      }
+  
+      // Create a new workbook and worksheet
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Record");
+  
+      // Add headers to the worksheet (excluding id and date_created)
+      const columns = Object.keys(selectResult.rows[0]).filter(
+        (col) => col !== "id" && col !== "date_created"
+      );
+      worksheet.addRow(columns);
+  
+      // Add the record to the worksheet (excluding id and date_created)
+      const rowData = columns.map((col) => selectResult.rows[0][col]);
+      worksheet.addRow(rowData);
+  
+      // Set content type and send the file with a dynamic filename
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=${recordId}.xlsx`
+      );
+  
+      // Write to the response stream
+      await workbook.xlsx.write(res);
+  
+      // End the response
+      res.end();
+    } catch (error) {
+      console.error(`Error while exporting record: `, error);
+      res.status(500).json("Server Error");
+    }
+  });
+  
 
 module.exports = router;
