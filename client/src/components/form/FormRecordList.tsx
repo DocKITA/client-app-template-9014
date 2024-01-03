@@ -114,6 +114,16 @@ const Main: React.FC<RecordListProps> = (props) => {
         <>
             <Row className="justify-content-end">
                 <Col xs="auto">
+                    <Link to={`/`}>
+                        <Button
+                            variant="outline-light"
+                            style={{ backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR }}
+                        >
+                            Cancel
+                        </Button>
+                    </Link>
+                </Col>
+                <Col xs="auto">
                     <Button
                         onClick={() => setShowExportModal(true)}
                         variant="outline-light"
