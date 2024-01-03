@@ -183,19 +183,13 @@ const App = () => {
 							<Col>
 								<Routes>
 									<Route path="/*" element={<Home />} />
-									<Route
-										path="/acc/:profile_id/*"
-										element={<Profile />}
-									/>
+									<Route path="/acc/:profile_id/*" element={<Profile />} />
 									{/* 
 										Need to write a useEffect to load the route content
 										Create a loop for route list
 										<Route path `/f/${form.url}` element = FormRecordList tableName = form.tableName />
 									*/}
-									<Route
-										path="/f/:form_list_url/*"
-										element={<FormRecordList />}
-									/>
+									<Route path="/f/:form_list_url/*" element={<FormRecordList />} />
 								</Routes>
 							</Col>
 						</Row>
