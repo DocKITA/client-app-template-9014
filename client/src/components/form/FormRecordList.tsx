@@ -10,7 +10,7 @@ interface RouteProps {
     url: string;
     table: string;
     file: string;
-    column_list: string[];
+    columns_list: string[];
 }
 
 interface RecordListProps {
@@ -281,7 +281,7 @@ const FormRecordList = () => {
                 url: similarForm.url,
                 table: similarForm.table,
                 file: similarForm.file,
-                column_list: similarForm.columns_list as string[]
+                columns_list: similarForm.columns_list as string[]
             });
         }
     }, []);
@@ -291,7 +291,7 @@ const FormRecordList = () => {
             {
                 routeProps && (
                     <>
-                        <Route path="/" element={<Main tableName={routeProps.table} columnList={routeProps.column_list} /> }/>
+                        <Route path="/" element={<Main tableName={routeProps.table} columnList={routeProps.columns_list} /> }/>
                         <Route path="/create-new" element={ <NewRecord fileName={routeProps.file} tableName={routeProps.table} /> } />
                         <Route path="/r/:record_id" element={ <ModifyRecord fileName={routeProps.file} tableName={routeProps.table} /> } />
                     </>
