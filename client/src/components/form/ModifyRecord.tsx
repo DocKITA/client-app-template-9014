@@ -199,6 +199,27 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
     }
   };
   
+  const handleSubmit = async () => {
+    try {
+        const res = await fetch(`/api/form/submit-record`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                table: tableName,
+                status: "pending",
+                id: record_id,
+            })
+        });
+
+        if (res.ok) {
+            setSavedSuccess(true);
+        }
+    } catch (error) {
+        console.error(`Error while submitting record: ${error}`);
+    }
+};
 
   const handleSave = async () => {
     const currentPageData = fabricCanvas.toJSON();
@@ -519,6 +540,15 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
             >
               Save
             </Button>
+            <Button 
+                onClick={() => {handleSave(); handleSubmit();}}
+                variant="outline-light" 
+                className="float-end"
+                style={{backgroundColor: "#30D5C8",}}
+                disabled={savedSuccess}
+              >
+                Submit
+            </Button>
           </Col>
 
           <Modal
@@ -568,7 +598,7 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
           </Modal>
         </Row>
         <Row className="mx-auto " style={{ width: "95vw", height: "75vh" }}>
-          <Col className="overflow-auto h-100 w-100">
+          <Col className="overflow-auto h-100 w-100 d-flex justify-content-center">
             <canvas
               className=""
               id="canvasRef"

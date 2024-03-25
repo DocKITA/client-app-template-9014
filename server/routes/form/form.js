@@ -40,14 +40,14 @@ router.post("/get-record", async (req, res) => {
 });
 
 router.post("/insert-record", async (req, res) => {
-    const { table, data } = req.body;
+    const { table, user, data } = req.body;
     try {
         console.log('Table: ', table);
         console.log('Data: ', data);
         // Execute Insert command
 
-        const columnNames = [];
-        const values = [];
+        const columnNames = ['user_id'];
+        const values = [`'${user}'`];
 
         for (const obj of data) {
             const { id, text } = obj;
@@ -63,13 +63,15 @@ router.post("/insert-record", async (req, res) => {
         const valuePlaceholders = values.join(', ');
 
         // Constructing SQL query
-        const query = `INSERT INTO ${table} (${columns}) VALUES (${valuePlaceholders})`;
+        const query = `INSERT INTO ${table} (${columns}) VALUES (${valuePlaceholders}) RETURNING id`;
 
         // console.log(query);
         const result = await pool.query(query);
 
         if (result.rowCount === 1) {
-            return res.status(200).json("Success");
+          const insertedId = result.rows[0].id; // Retrieve the inserted ID
+          console.log(`Inserted ID: ${insertedId}`);
+          return res.status(200).json({ message: "Success", id: insertedId });
         }
     } catch (e) {
         console.error(`Error: `, e.message);
@@ -97,6 +99,26 @@ router.post("/update-record", async (req, res) => {
         return res.status(500).json("Server Error");
     }
 });
+
+router.post("/submit-record", async (req, res) => {
+    const { table, status, id } = req.body;
+
+    try{
+        
+        const query = `UPDATE ${table} SET approval_status = '${status}' WHERE id = '${id}'`;
+
+        const result = await pool.query(query); 
+
+        if (result.rowCount === 1) {
+          return res.status(200).json("Success");
+      } else {
+          return res.status(404).json("Record not found");
+      }
+    } catch (error) {
+      console.error(`Error while submitting record: `, error);
+      return res.status(500).json("Server Error");
+    }
+  }); 
 
 router.delete('/delete-record', async (req, res) => {
     const { id, table } = req.body;

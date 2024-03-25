@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, Route, Routes, useParams, useNavigate } from "react-router-dom";
 import NewRecord from "./NewRecord";
 import ModifyRecord from "./ModifyRecord";
+import FormProgress from "./FormProgress";
 import routesData from "./../../../routes.json";
 import { Row, Col, Table, Button, Modal } from "react-bootstrap";
 
@@ -138,6 +139,7 @@ const Main: React.FC<RecordListProps> = (props) => {
                     <Link to={`./create-new`}>
                         <Button
                             variant="outline-light"
+                            className="float-end me-2"
                             style={{ backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR }}
                         >
                             New Record
@@ -189,6 +191,8 @@ const Main: React.FC<RecordListProps> = (props) => {
                                         
                                     }
                                     <td>
+                                    <div style={{ display: 'flex', gap:"12px", justifyContent: 'center' }}>
+
                                         <Link to={`./r/${record.id}`}>
                                             <Button
                                                 variant="outline-light"
@@ -197,6 +201,16 @@ const Main: React.FC<RecordListProps> = (props) => {
                                                 View
                                             </Button>
                                         </Link>
+                                        <Link to={`./r/progress`}>
+                                        <Button 
+                                            variant="outline-light" 
+                                            className="float-end"
+                                            style={{backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR,}}
+                                        >
+                                            Progress
+                                        </Button>
+                                        </Link>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -294,6 +308,7 @@ const FormRecordList = () => {
                         <Route path="/" element={<Main tableName={routeProps.table} columnList={routeProps.column_list} /> }/>
                         <Route path="/create-new" element={ <NewRecord fileName={routeProps.file} tableName={routeProps.table} /> } />
                         <Route path="/r/:record_id" element={ <ModifyRecord fileName={routeProps.file} tableName={routeProps.table} /> } />
+                        <Route path="/r/progress" element={ <FormProgress fileName={routeProps.file} tableName={routeProps.table} /> } />
                     </>
                 )
             }

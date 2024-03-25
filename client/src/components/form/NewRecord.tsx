@@ -27,6 +27,7 @@ import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
 import { ref } from 'firebase/storage';
 
+
 interface FormProps {
     fileName: string;
     tableName: string;
@@ -59,7 +60,8 @@ const NewRecord: React.FC<FormProps> = (props) => {
     const [currentPage, setCurrentPage] = useState<number>(0);
     const [isPanningMode, setIsPanningMode] = useState<boolean>(false);
     const [canvasChanged, setCanvasChanged] = useState<boolean>(false);
-
+    const [recordId, setRecordID] = useState<string>("");
+    const [shouldSubmit, setShouldSubmit] = useState(false);
     const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
 
     const canvasRef = useRef(null);
@@ -175,6 +177,17 @@ const NewRecord: React.FC<FormProps> = (props) => {
         }
     };
 
+    const handleSubmit = async () => {
+        try {
+            
+            await handleSave();
+            setShouldSubmit(true);
+            
+        } catch (error) {
+            console.error(`Error while submitting record: ${error}`);
+        }
+    };
+
     const handleSave = async () => {
         const currentPageData = fabricCanvas.toJSON();
         const updatedPages = [...pages];
@@ -220,17 +233,50 @@ const NewRecord: React.FC<FormProps> = (props) => {
                 },
                 body: JSON.stringify({
                     table: tableName,
+                    user: user?.sub,
                     data: flattenedData
                 })
             });
     
             if (res.ok) {
+                const data = await res.json();
+                console.log(`ID: ${data.id}`);
+                setRecordID(data.id);
+
                 setSavedSuccess(true);
             }
         } catch (error) {
             console.error(`Error while insert record: ${error}`);
         }
     };
+
+    useEffect(() => {
+        if (recordId !== null && shouldSubmit) {
+            const submitRecord = async () => {
+                try {
+                    const res = await fetch(`/api/form/submit-record`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            table: tableName,
+                            status: "pending",
+                            id: recordId,
+                        })
+                    });
+
+                    if (res.ok) {
+                        setSavedSuccess(true);
+                    }
+                } catch (error) {
+                    console.error(`Error while insert record: ${error}`);
+                }
+            };
+
+            submitRecord();
+        }
+    }, [shouldSubmit]);
 
     useEffect(() => {
         const extractJSONFile = async () => {
@@ -432,10 +478,19 @@ const NewRecord: React.FC<FormProps> = (props) => {
                         >
                             Save
                         </Button>
+                        <Button 
+                            onClick={handleSubmit}
+                            variant="outline-light" 
+                            className="float-end"
+                            style={{backgroundColor: "#30D5C8",}}
+                            disabled={savedSuccess}
+                        >
+                            Submit
+                        </Button>
                     </Col>
                 </Row>
-                <Row className="mx-auto " style={{ width: "95vw", height: "75vh"}}>
-                    <Col className="overflow-auto h-100 w-100">
+                <Row className="mx-auto" style={{ width: "95vw", height: "75vh" }}>
+                    <Col className="overflow-auto h-100 w-100 d-flex justify-content-center">
                         <canvas className="" id="canvasRef" ref={canvasRef} style={{ cursor: "default" }} />
                     </Col>
                 </Row>
