@@ -4,7 +4,7 @@ import NewRecord from "./NewRecord";
 import ModifyRecord from "./ModifyRecord";
 import FormProgress from "./FormProgress";
 import routesData from "./../../../routes.json";
-import { Row, Col, Table, Button, Modal } from "react-bootstrap";
+import { Row, Col, Table, Button, Modal, InputGroup, Card, Form } from "react-bootstrap";
 
 interface RouteProps {
     name: string;
@@ -26,6 +26,9 @@ const Main: React.FC<RecordListProps> = (props) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const itemsPerPage = 10;
     const [showExportModal, setShowExportModal] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+
 
     const loadTableData = async () => {
         try {
@@ -107,28 +110,60 @@ const Main: React.FC<RecordListProps> = (props) => {
         }
     };
 
+    const handleSearch = async () => {
+        const searchValue = searchQuery;
+
+        try {
+            const response = await fetch(
+                `/api/form/get-search-list/${tableName}?search=${searchValue}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+                const data = await response.json();
+                console.log(`Data`, data);
+                setRecordList(data.recordList);
+            }
+        } catch (error) {
+            console.error("Error loading data:", error);
+        }
+    }
+
     useEffect(() => {
         loadTableData();
     }, [currentPage]);
 
+
     return (
         <>
-            <Row className="justify-content-end">
+            <Row className="justify-content-between">
                 <Col xs="auto">
                     <Link to={`/`}>
                         <Button
+                            className="float-"
                             variant="outline-light"
                             style={{ backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR }}
                         >
-                            Cancel
+                            Back
                         </Button>
                     </Link>
                 </Col>
                 <Col xs="auto">
+                    <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                        />
+
                     <Button
                         onClick={() => setShowExportModal(true)}
                         variant="outline-light"
-                        className="float-end"
+                        className="float-end me-2"
                         style={{
                             backgroundColor:
                                 process.env.REACT_APP_APPLICATION_THEME_COLOR,
@@ -145,14 +180,24 @@ const Main: React.FC<RecordListProps> = (props) => {
                             New Record
                         </Button>
                     </Link>
-                </Col>
-                <Col xs="auto">
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
-                    />
-                </Col>
+                    <Card style={{ width: "30rem", backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR }} className="float-end me-2 ">
+                        <InputGroup>
+                            <Form.Control
+                                type="search"
+                                placeholder="Search form"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                            <Button 
+                                onClick={handleSearch}
+                                variant="outline-light"
+                                style={{backgroundColor: process.env.REACT_APP_APPLICATION_THEME_COLOR}}
+                            >
+                                Search
+                            </Button>
+                        </InputGroup>
+                    </Card>
+                </Col>     
             </Row>
             <Row>
                 <Col xs={12}>
@@ -162,7 +207,8 @@ const Main: React.FC<RecordListProps> = (props) => {
                                 {
                                     columnList.length > 0 ? (
                                         columnList.map((item, index) => (
-                                            <th>{item}</th>
+                                            item === 'id' ? <th style={{ width: "150px" }}>{item}</th> : <th>{item}</th>
+
                                         ))   
                                     ) : (
                                         <>
@@ -176,23 +222,24 @@ const Main: React.FC<RecordListProps> = (props) => {
                         </thead>
                         <tbody>
                             {recordList.map((record, index) => (
-                                <tr key={index}>
-                                    {
-                                        columnList.length > 0 ? (
-                                            columnList.map((item, index) => (
-                                                <td>{record[item]}</td>    
-                                            ))
-                                        ) : (
-                                            <>
-                                                <td>{record.id}</td>
-                                                <td>{formatDate(record.date_created)}</td>
-                                            </>
-                                        )
-                                        
-                                    }
-                                    <td>
+                            <tr key={index}>
+                                {
+                                    columnList.length > 0 ? (
+                                        columnList.map((item, index) => (
+                                            item === 'id' ? <td style={{ width: "150px" }}>{record[item]}</td> : <td>{record[item]}</td>    
+   
+                                        ))
+                                    ) : (
+                                        <>
+                                            <td>{record.id}</td>
+                                            <td>{new Date(record.date_created).toLocaleDateString()}</td>
+                                        </>
+                                    )
+                                    
+                                }
+                                <td>
                                     <div style={{ display: 'flex', gap:"12px", justifyContent: 'center' }}>
-
+                    
                                         <Link to={`./r/${record.id}`}>
                                             <Button
                                                 variant="outline-light"
@@ -210,10 +257,10 @@ const Main: React.FC<RecordListProps> = (props) => {
                                             Progress
                                         </Button>
                                         </Link>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
                         </tbody>
                     </Table>
                 </Col>
@@ -246,7 +293,7 @@ const Pagination: React.FC<{
     onPageChange: (pageNumber: number) => void;
 }> = ({ currentPage, totalPages, onPageChange }) => {
     return (
-        <div className="pagination">
+        <div className="pagination float-end ">
             <ul className="pagination-list list-unstyled d-flex">
                 <li className="page-item">
                     <Button

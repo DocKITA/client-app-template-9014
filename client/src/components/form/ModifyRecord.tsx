@@ -509,7 +509,7 @@ const ModifyRecord: React.FC<FormProps> = (props) => {
             </Button>
           </Col>
           <Col>
-          <Button
+            <Button
               onClick={() => setShowExportModal(true)}
               variant="outline-light"
               className="float-end"

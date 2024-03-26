@@ -26,6 +26,36 @@ router.get("/get-record-list/:tableName", async (req, res) => {
     }
 });
 
+router.get("/get-search-list/:tableName", async (req, res) => {
+  const { tableName } = req.params;
+  const { search } = req.query;
+
+  try {
+      // Get the column lists
+      const columnsQuery = `SELECT column_name, data_type FROM information_schema.columns 
+                              WHERE table_name = $1 
+                              AND data_type IN ('text', 'character varying', 'uuid', 'date')`;
+      const columnsResult = await pool.query(columnsQuery, [tableName]);
+      const columns = columnsResult.rows.map(row => ({ name: row.column_name, type: row.data_type }));
+
+      // Search in each column
+      const conditions = columns.map(column => {
+        if (column.type === 'uuid' || column.type === 'date') {
+            return `CAST(${column.name} AS text) ILIKE '%${search}%'`;
+        } else {
+            return `${column.name} ILIKE '%${search}%'`;
+        }
+    }).join(" OR ");
+      const selectQuery = `SELECT * FROM ${tableName} WHERE ${conditions}`;
+
+      const selectResult = await pool.query(selectQuery);
+      console.log(`Load table`);
+      return res.status(200).json({ message: "Success", recordList: selectResult.rows });
+  } catch (e) {
+      console.error(`Error: `, e.message);
+      res.status(500).json("Server Error");
+  }
+});
 router.post("/get-record", async (req, res) => {
     const { table, record_id } = req.body;
     try {
