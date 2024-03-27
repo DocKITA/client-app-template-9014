@@ -27,8 +27,6 @@ const Main: React.FC<RecordListProps> = (props) => {
     const itemsPerPage = 10;
     const [showExportModal, setShowExportModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
-
 
     const loadTableData = async () => {
         try {
@@ -207,7 +205,7 @@ const Main: React.FC<RecordListProps> = (props) => {
                                 {
                                     columnList.length > 0 ? (
                                         columnList.map((item, index) => (
-                                            item === 'id' ? <th style={{ width: "150px" }}>{item}</th> : <th>{item}</th>
+                                            item === 'id' || item === 'date_created' ? <th style={{ width: "150px" }}>{item}</th> : <th>{item}</th>
 
                                         ))   
                                     ) : (
@@ -224,19 +222,21 @@ const Main: React.FC<RecordListProps> = (props) => {
                             {recordList.map((record, index) => (
                             <tr key={index}>
                                 {
-                                    columnList.length > 0 ? (
-                                        columnList.map((item, index) => (
-                                            item === 'id' ? <td style={{ width: "150px" }}>{record[item]}</td> : <td>{record[item]}</td>    
-   
-                                        ))
-                                    ) : (
-                                        <>
-                                            <td>{record.id}</td>
-                                            <td>{new Date(record.date_created).toLocaleDateString()}</td>
-                                        </>
-                                    )
-                                    
-                                }
+                            columnList.length > 0 ? (
+                                columnList.map((item, index) => (
+                                    item === 'id' || item === 'date_created' ? 
+                                    <td style={{ width: "150px", whiteSpace: "nowrap" }} title={item === 'id' ? record[item] : ""}>
+                                        {item === 'id' ? (record[item] as string).substring(0, 15) + '...' : new Date(record[item]).toLocaleDateString()}
+                                    </td> : 
+                                    <td>{record[item]}</td>    
+                                ))
+                            ) : (
+                                <>
+                                    <td>{(record.id as string).substring(0, 10) + '...'}</td>
+                                    <td>{new Date(record.date_created).toLocaleDateString()}</td>
+                                </>
+                            )
+}
                                 <td>
                                     <div style={{ display: 'flex', gap:"12px", justifyContent: 'center' }}>
                     
